@@ -1,3 +1,4 @@
 # Progetto tesi nuovo
 
-## COSE
+## Cose da fare
+1. fare delle cose
