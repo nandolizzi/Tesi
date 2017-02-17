@@ -1,0 +1,12 @@
+# Questo è il file di configurazione da passare al programma
+# Nome del file
+char ProjectName [255];
+# Nome del file dati
+char DataFile[255];
+# Coordinate iniziali, do informazioni prima su X poi su Y 
+float lowLeft_E;
+float lowLeft_N;
+# Definizione della soglia
+float soglia;
+#passo del grid data
+GridUnit= 0.15;
