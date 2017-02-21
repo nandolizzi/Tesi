@@ -21,7 +21,7 @@ bool input_number_parameter( int &num_par)
 
 	if ( num_par > 3 )
 	{
-		cout << "Error! You insert too much arguments. The program need only the names of the data file and the name of the configuration file." << endl;
+		cout << "Error! You insert too much arguments. The program needs only the names of the data file and the name of the configuration file." << endl;
 		return false;
 	}
 	/* Se il numero dei parametri è corretto restituisco true*/
@@ -29,14 +29,15 @@ bool input_number_parameter( int &num_par)
 		return true;
 }
 
-bool data_extension(string &name)
+bool data_extension(const char *filename)
 {
+	string name(filename);
 	size_t pos = name.rfind('.');
 
   	/* Se non è stato inserito nessun '.' vuol dire che il file che si è cercato di caricare non possedeva estensione alcuna.*/
   	if (name.rfind('.') == string::npos)
   	{
-  		cout << "Error! You insert a file without extension." << endl;
+  		cout << "Error! You insert a data file without extension." << endl;
   		return false;
   	}
 
@@ -52,19 +53,20 @@ bool data_extension(string &name)
 	else
 	{
 		/* L'estensione non è corretta.*/
-		cout << "Error the file passed how data it's not a txt file!" << endl;
+		cout << "Error the file passed how data it's not a .txt file!" << endl;
 		return false;
 	}
 }
 
-bool conf_extension(string &name)
+bool conf_extension(const char *filename)
 {
+	string name(filename);
 	size_t pos = name.rfind('.');
 
   	/* Se non è stato inserito nessun '.' vuol dire che il file che si è cercato di caricare non possedeva estensione alcuna.*/
   	if (name.rfind('.') == string::npos)
   	{
-  		cout << "Error! You insert a file without extension." << endl;
+  		cout << "Error! You insert a configuration file without extension." << endl;
   		return false;
   	}
 

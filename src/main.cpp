@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-#include <fstream>
 #include <Core>
-#include <string.h>
 
 #include "input_validate.h"
 
@@ -10,28 +8,57 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-	int num_par= argc;
-	/* Si verifica innanzitutto che il numero di paramentri immessi sia pari a 3.
-		sono interessato al nome del programma argv[0], al nome del file dei dati argv[1]
-		e al nome del file di configurazione argv[2]. */
+	// inizializzo un intero di appoggio per non utilizzare argc
+	int n_par= argc;
+
+	// Verifico che si sia inserito il giusto numero di parametri
+	if(!input_number_parameter( n_par))
+		return 1;
+
+	// Creo una matrice che contenga le dimensioni dei parametri passati al programma
+	int *dim_argv = (int*)malloc( (argc) * sizeof(int) );
+
+	// Routine per calcolare le dimensioni delle stringhe dei paramentri
+	for (int j= 0; j < n_par; j++)
+	{
+		for (int i = 0; i < argv[j][i] != '\0'; i++)
+		{
+			dim_argv[j]= i;
+		}
+	}
+
+	// alloco la memoria per la copia del nome del file dei dati
+	char *new_argv_1 = (char*)malloc( (dim_argv[1]) * sizeof(char));
 	
-	if(!input_number_parameter( num_par))
+	// ciclo di copia del parametro in un array di appoggio
+	for (int i = 0; i <= dim_argv[1]; i++)
+	{
+		new_argv_1 [i] = argv[1][i];
+	}
+	// Chiudo l'array che altrimenti avrebbe qualcosa appeso ( ma se ho allocato un qualcosa con le giuste dimensioni perché accade??)
+	new_argv_1 [dim_argv[1]+1]= '\0';
+
+	// Verifico che l'estensione sia corretta
+	if(!data_extension( new_argv_1))
 		return 1;
 
-	/* Si esegue un controllo sulle estensioni dei file.
-		Per prima cosa si verifica l'estenzione del file dei dati. */
-	string data_name(argv[1]);
-	if(! data_extension(data_name));
-		return 1;
+	// Stessa cosa per il file di configurazione
+	
+	// alloco la memoria per la copia del nome del file dei dati
+	char *new_argv_2 = (char*)malloc( (dim_argv[2]) * sizeof(char));
+	
+	// ciclo di copia del parametro in un array di appoggio
+	for (int i = 0; i <= dim_argv[2]; i++)
+	{
+		new_argv_2 [i] = argv[2][i];
+	}
+	new_argv_2 [dim_argv[2]+1]= '\0';
 
-	/* Si esegue la verifica dell'estensione del file di configurazione */
-	string conf_name(argv[2]);
-	if(! conf_extension(conf_name));
+	// Verifico che l'estensione sia corretta
+	if(!conf_extension( new_argv_2))
 		return 1;
 	
-	/* Se le estensioni sono corrette carico i due file */
+	cout << "The three file you passed were all correct" << endl;
 
-
-
-	return 0;
+	return 1;
 }

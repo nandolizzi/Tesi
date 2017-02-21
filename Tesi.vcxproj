@@ -11,16 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\configFile.cpp" />
     <ClCompile Include="src\input_validate.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\tools.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\configFile.h" />
-    <ClInclude Include="include\input_validate.h" />
-    <ClInclude Include="include\param_elem.h" />
-    <ClInclude Include="include\tools.h" />
+    <ClInclude Include="src\input_validate.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E7DDF298-F204-43D0-A6B8-51457870EDCD}</ProjectGuid>
@@ -67,7 +62,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>C:\Users\Nando\Documents\Visual Studio 2012\Projects\Progetto_new\include;C:\Users\Nando\Documents\Eigen_Lib_SRCS\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Nando\Documents\Eigen_Lib_SRCS\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
