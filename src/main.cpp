@@ -1,8 +1,14 @@
 #include <stdio.h>
 #include <iostream>
+#include <string>
+#include <vector>
 #include <Core>
 
 #include "input_validate.h"
+#include "parameters.h"
+#include "config_file.h"
+#include "const.h"
+#include "defs.h"
 
 using namespace std;
 
@@ -15,50 +21,32 @@ int main(int argc, char const *argv[])
 	if(!input_number_parameter( n_par))
 		return 1;
 
-	// Creo una matrice che contenga le dimensioni dei parametri passati al programma
-	int *dim_argv = (int*)malloc( (argc) * sizeof(int) );
-
-	// Routine per calcolare le dimensioni delle stringhe dei paramentri
-	for (int j= 0; j < n_par; j++)
+	// Inizializzo un vettore di stringhe per copiare gli argomenti
+	std::vector<string> v;
+	for (int i = 1; i < argc; i++) 
 	{
-		for (int i = 0; i < argv[j][i] != '\0'; i++)
-		{
-			dim_argv[j]= i;
-		}
+		v.push_back(argv[i]);
 	}
-
-	// alloco la memoria per la copia del nome del file dei dati
-	char *new_argv_1 = (char*)malloc( (dim_argv[1]) * sizeof(char));
+	// Creo due nuove variabili contenenti i nomi dei file passati da linea di comando
+	const char *new_argv_1 = v[0].c_str();
+	const char *new_argv_2 = v[1].c_str();
 	
-	// ciclo di copia del parametro in un array di appoggio
-	for (int i = 0; i <= dim_argv[1]; i++)
-	{
-		new_argv_1 [i] = argv[1][i];
-	}
-	// Chiudo l'array che altrimenti avrebbe qualcosa appeso ( ma se ho allocato un qualcosa con le giuste dimensioni perché accade??)
-	new_argv_1 [dim_argv[1]+1]= '\0';
-
-	// Verifico che l'estensione sia corretta
-	if(!data_extension( new_argv_1))
+	// Verifico che l'estensioni siano corrette
+	if(!data_extension( new_argv_1 ))
 		return 1;
 
-	// Stessa cosa per il file di configurazione
-	
-	// alloco la memoria per la copia del nome del file dei dati
-	char *new_argv_2 = (char*)malloc( (dim_argv[2]) * sizeof(char));
-	
-	// ciclo di copia del parametro in un array di appoggio
-	for (int i = 0; i <= dim_argv[2]; i++)
-	{
-		new_argv_2 [i] = argv[2][i];
-	}
-	new_argv_2 [dim_argv[2]+1]= '\0';
-
-	// Verifico che l'estensione sia corretta
-	if(!conf_extension( new_argv_2))
+	if(!conf_extension( new_argv_2 ))
 		return 1;
 	
 	cout << "The three file you passed were all correct" << endl;
+	DataSet *prova= new DataSet;
+	ConfigFile *file = new ConfigFile();
 
+	//file -> printAllParameters();
+	file -> load (new_argv_2);
+	//file -> printAllParameters();
+	Config2Data(prova);
+	printData(prova);
+	delete prova;
 	return 1;
 }

@@ -11,11 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\config_file.cpp" />
+    <ClCompile Include="src\error.cpp" />
+    <ClCompile Include="src\get_line.cpp" />
     <ClCompile Include="src\input_validate.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\parameters.cpp" />
+    <ClCompile Include="src\defs.cpp" />
+    <ClCompile Include="src\txt_file.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\config_file.h" />
+    <ClInclude Include="src\const.h" />
+    <ClInclude Include="src\error.h" />
+    <ClInclude Include="src\get_line.h" />
     <ClInclude Include="src\input_validate.h" />
+    <ClInclude Include="src\parameters.h" />
+    <ClInclude Include="src\defs.h" />
+    <ClInclude Include="src\txt_file.h" />
+    <ClInclude Include="src\usefull_file.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E7DDF298-F204-43D0-A6B8-51457870EDCD}</ProjectGuid>

@@ -9,3 +9,5 @@
 bool input_number_parameter( int &num_par);
 bool data_extension(const char *filename);
 bool conf_extension(const char *filename);
+
+// Potrei inserire controlli su file non nulli

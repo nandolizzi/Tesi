@@ -1,0 +1,92 @@
+﻿Compilazione avviata 25/02/2017 12:42:11.
+     1>Progetto "C:\Users\Nando\Documents\Visual Studio 2012\Projects\Progetto_new\Tesi.vcxproj" sul nodo 2 (destinazioni: Build).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\Users\Nando\Documents\Eigen_Lib_SRCS\Eigen /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt src\config_file.cpp src\error.cpp src\get_line.cpp src\input_validate.cpp src\main.cpp src\parametri.cpp
+         parametri.cpp
+     1>c:\users\nando\documents\visual studio 2012\projects\progetto_new\src\parametri.cpp(452): warning C4305: '=': troncamento da 'double' a 'float'
+         main.cpp
+         input_validate.cpp
+         get_line.cpp
+         error.cpp
+         config_file.cpp
+     1>c:\users\nando\documents\visual studio 2012\projects\progetto_new\src\parametri.cpp(452): warning C4305: '=': troncamento da 'double' a 'float'
+     1>c:\users\nando\documents\visual studio 2012\projects\progetto_new\src\config_file.cpp(50): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218): vedere la dichiarazione di 'fopen'
+     1>c:\users\nando\documents\visual studio 2012\projects\progetto_new\src\config_file.cpp(170): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218): vedere la dichiarazione di 'fopen'
+         Generazione del codice in corso...
+     1>c:\users\nando\documents\visual studio 2012\projects\progetto_new\src\config_file.cpp(195): warning C4715: 'ConfigFile::save': non tutti i percorsi di controllo restituiscono un valore
+     1>c:\users\nando\documents\visual studio 2012\projects\progetto_new\src\config_file.cpp(163): warning C4715: 'ConfigFile::load': non tutti i percorsi di controllo restituiscono un valore
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nando\Documents\Visual Studio 2012\Projects\Progetto_new\Debug\Tesi.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Nando\Documents\Visual Studio 2012\Projects\Progetto_new\Debug\Tesi.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nando\Documents\Visual Studio 2012\Projects\Progetto_new\Debug\Tesi.lib" /MACHINE:X86 Debug\config_file.obj
+         Debug\error.obj
+         Debug\get_line.obj
+         Debug\input_validate.obj
+         Debug\main.obj
+         Debug\parametri.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaCluster(void const *,int)" (?validateSogliaCluster@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateDimMinRegione(void const *,int)" (?validateDimMinRegione@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateTipoOutputBMP(void const *,int)" (?validateTipoOutputBMP@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateTipoOutput(void const *,int)" (?validateTipoOutput@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateTipoOutputASCII(void const *,int)" (?validateTipoOutputASCII@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateNumPartizioni(void const *,int)" (?validateNumPartizioni@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateTipoRicerca(void const *,int)" (?validateTipoRicerca@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateTipoSpline(void const *,int)" (?validateTipoSpline@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateTipoDatoLF(void const *,int)" (?validateTipoDatoLF@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateDimFiltro(void const *,int)" (?validateDimFiltro@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaPianoMaxResiduo(void const *,int)" (?validateSogliaPianoMaxResiduo@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaTT(void const *,int)" (?validateSogliaTT@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaTT2(void const *,int)" (?validateSogliaTT2@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaSS1(void const *,int)" (?validateSogliaSS1@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaSSEC(void const *,int)" (?validateSogliaSSEC@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateCriteriTerreno(void const *,int)" (?validateCriteriTerreno@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaSS2(void const *,int)" (?validateSogliaSS2@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaUEB(void const *,int)" (?validateSogliaUEB@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaINGOMBRO(void const *,int)" (?validateSogliaINGOMBRO@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validatePercFirstTerreno(void const *,int)" (?validatePercFirstTerreno@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateDislivelloTerreno(void const *,int)" (?validateDislivelloTerreno@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateExtTerreno(void const *,int)" (?validateExtTerreno@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaINDUSTRIALE(void const *,int)" (?validateSogliaINDUSTRIALE@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validatePercentualeFalde(void const *,int)" (?validatePercentualeFalde@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaLIMITE_PUNTI(void const *,int)" (?validateSogliaLIMITE_PUNTI@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validatePaletteFile(void const *,int)" (?validatePaletteFile@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateDislivelloMatriceSparsa(void const *,int)" (?validateDislivelloMatriceSparsa@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateLoLeftX(void const *,int)" (?validateLoLeftX@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateLoLeftY(void const *,int)" (?validateLoLeftY@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateGridWidth(void const *,int)" (?validateGridWidth@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateGridHeight(void const *,int)" (?validateGridHeight@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateGridUnit(void const *,int)" (?validateGridUnit@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateShowAdditionalInfos(void const *,int)" (?validateShowAdditionalInfos@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateRansacConfigFile(void const *,int)" (?validateRansacConfigFile@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateStimaFaldaRansac(void const *,int)" (?validateStimaFaldaRansac@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateuscitaRisultatiClassificazione(void const *,int)" (?validateuscitaRisultatiClassificazione@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateCodiceLast(void const *,int)" (?validateCodiceLast@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaGradContornoColmi(void const *,int)" (?validateSogliaGradContornoColmi@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSogliaGradOrientazione(void const *,int)" (?validateSogliaGradOrientazione@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateDeltaFirstLast(void const *,int)" (?validateDeltaFirstLast@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSplineG(void const *,int)" (?validateSplineG@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSplineW(void const *,int)" (?validateSplineW@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSplinePassoEst(void const *,int)" (?validateSplinePassoEst@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSplinePassoNord(void const *,int)" (?validateSplinePassoNord@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSplineLambda(void const *,int)" (?validateSplineLambda@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateSplineNumIterazioni(void const *,int)" (?validateSplineNumIterazioni@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateRansacThreshold(void const *,int)" (?validateRansacThreshold@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateRansacProb(void const *,int)" (?validateRansacProb@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateRansacGrosErr(void const *,int)" (?validateRansacGrosErr@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateRansacStop(void const *,int)" (?validateRansacStop@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateRansacMinNumPointsInPlane(void const *,int)" (?validateRansacMinNumPointsInPlane@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validate_sqmZ(void const *,int)" (?validate_sqmZ@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateNormalizzazione(void const *,int)" (?validateNormalizzazione@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "char * __cdecl selectFormat(int)" (?selectFormat@@YAPADH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateJWGContornoTOPOSYS(void const *,int)" (?validateJWGContornoTOPOSYS@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateJWGNumClasse(void const *,int)" (?validateJWGNumClasse@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateNomeFileCFGDatiRAW(void const *,int)" (?validateNomeFileCFGDatiRAW@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "int __cdecl validateOrdineLF(void const *,int)" (?validateOrdineLF@@YAHPBXH@Z) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "struct Configurator laserRegioniConfig" (?laserRegioniConfig@@3UConfigurator@@A) già definito in config_file.obj
+     1>parametri.obj : error LNK2005: "struct _ParamElem * params" (?params@@3PAU_ParamElem@@A) già definito in config_file.obj
+     1>C:\Users\Nando\Documents\Visual Studio 2012\Projects\Progetto_new\Debug\Tesi.exe : fatal error LNK1169: rilevato uno o più simboli definiti più volte
+     1>Compilazione progetto "C:\Users\Nando\Documents\Visual Studio 2012\Projects\Progetto_new\Tesi.vcxproj" (destinazioni: Build) NON COMPLETATA.
+
+Compilazione NON RIUSCITA.
+
+Tempo trascorso 00:00:03.98

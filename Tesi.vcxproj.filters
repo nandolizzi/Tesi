@@ -21,9 +21,51 @@
     <ClCompile Include="src\input_validate.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="src\config_file.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\get_line.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\error.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\txt_file.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\defs.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\parameters.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\input_validate.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config_file.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\get_line.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\usefull_file.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\error.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\const.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\txt_file.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\defs.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\parameters.h">
       <Filter>File di origine</Filter>
     </ClInclude>
   </ItemGroup>
