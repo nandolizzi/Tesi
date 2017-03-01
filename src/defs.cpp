@@ -6,16 +6,12 @@
 
 int Config2Data(DataSet *data1)
 {
-	std::cout << "sono in Config2Data"<< std::endl;
 	extern Configurator laserRegioniConfig;
 
 	if (strstr(laserRegioniConfig.projectName, ".prj") == NULL)
 		strcat_s(laserRegioniConfig.projectName, strlen(".prj")+1,".prj");
-	std::cout<< "Il progetto si chiama: " << laserRegioniConfig.projectName << std::endl;
-	std::cout << "l'if non mi da problemi"<< std::endl;
-
+	
 	data1->UpLeftCGrid  = 0;									//laserRegioniConfig.upLeftC;
-	std::cout << "Mi fermo già qua!!"<< std::endl;
 	data1->UpLeftRGrid  = 0;									//laserRegioniConfig.upLeftR;
 	data1->LoRightCGrid = laserRegioniConfig.gridWidth;			//laserRegioniConfig.lowRightC;
 	data1->LoRightRGrid = laserRegioniConfig.gridHeight;		//laserRegioniConfig.lowRightR;
@@ -28,8 +24,6 @@ int Config2Data(DataSet *data1)
 	data1->LoLeftY      = laserRegioniConfig.loLeftY;
 	data1->UpRightX     = data1->LoLeftX + (double)(data1->pelsX * data1->widthGrid);
 	data1->UpRightY     = data1->LoLeftY + (double)(data1->pelsY * data1->heightGrid);
-	std::cout << "Pare che config2data va"<< std::endl;
-
 
 	return SUCCESS;
 	

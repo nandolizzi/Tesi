@@ -9,7 +9,7 @@ struct elemento
 	double est,nord;
 	double value,norma,intensity;
 	struct elemento *next;
-	int info;	//MAGGIO05: contiene informazioni sui punti della cella: ex. cella appartenente a UEB di SS
+	int info;						//MAGGIO05: contiene informazioni sui punti della cella: ex. cella appartenente a UEB di SS
 	char tipo;
   };
 
