@@ -14,7 +14,6 @@ public:
 	//int printAllParameters();
 
 
-
 private:
 	struct StringNode
   {

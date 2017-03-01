@@ -53,7 +53,7 @@ bool data_extension(const char *filename)
 	else
 	{
 		/* L'estensione non è corretta.*/
-		cout << "Error the file passed how data it's not a .txt file!" << endl;
+		cout << "Error! The file passed how data it's not a .txt file!" << endl;
 		return false;
 	}
 }

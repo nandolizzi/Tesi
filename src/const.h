@@ -1,6 +1,58 @@
 #pragma once
 
 /*---------------------------------------------*\
+	FIle const.h della prof.ssa
+\*---------------------------------------------*/
+
+#define NUM_CLASSI_INIZ 10000  //rapportare alla dimensione immagine
+#define NUM_CLASSI_INC 1000
+
+#define	PIGRECO        3.141592654
+#define	NONE 0
+#define	FALSE 0                //$ 204
+#define	TRUE 1                 //$ 204
+#define NOT_FOUND	-1
+#define USCITA_8BITS	1
+#define USCITA_16BITS	0
+
+#define DIM_IMM_TUTTA	1
+#define DIM_IMM_WINDOW 0
+	
+#define USCITA_ASCII_NO	0
+#define USCITA_ASCII_EN 1
+#define USCITA_ASCII_RC 2
+
+#define TIPORICERCA_DTM		0
+#define TIPORICERCA_EDIFICI	1
+#define TIPORICERCA_MEDIANO		2
+
+#define TIPO_LF_1SOLO		1
+#define TIPO_LF_LASTFIRST	2
+#define TIPO_LF_1SOLO_INTENSITA 3
+#define TIPO_LF_LASTFIRST_INSIEME 4
+#define TIPO_LF_LASTFIRST_INSIEME_NOTEMPO 5
+#define TIPO_LF_FIRSTLAST	6
+#define TIPO_LF_T_FIRSTLAST	7
+#define TIPO_LF_LASTFIRST_INSIEME_CODICI 8
+#define TIPO_UAV 9
+
+#define ORDINE_LF_FIRSTPULSE	0
+#define ORDINE_LF_LASTPULSE		1
+
+#define TIPO_SPLINE_BILIN		0
+#define TIPO_SPLINE_BICUB		1
+
+#define	 SUCCESS	0	
+#define  ERROR	(!SUCCESS)
+
+#define BLACK 0
+#define WHITE 255
+
+//JOHN 28/05/05
+#define LOG_DIR					"Logs"
+#define OUTPUTS_DIR				"Outputs"
+
+/*---------------------------------------------*\
 	Varie defines di costanti e valori di
 	default per i parametri
 \*---------------------------------------------*/

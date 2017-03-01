@@ -30,9 +30,6 @@
     <ClCompile Include="src\error.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
-    <ClCompile Include="src\txt_file.cpp">
-      <Filter>File di origine</Filter>
-    </ClCompile>
     <ClCompile Include="src\defs.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
       <Filter>File di origine</Filter>
     </ClInclude>
     <ClInclude Include="src\const.h">
-      <Filter>File di origine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\txt_file.h">
       <Filter>File di origine</Filter>
     </ClInclude>
     <ClInclude Include="src\defs.h">

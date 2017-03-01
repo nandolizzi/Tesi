@@ -12,7 +12,6 @@
 /*#define	 SUCCESS	0	
 #define  ERROR	(!SUCCESS)*/
 
-
 /*-------------------------------------------------------------*\
 	Nome routine:
 	selectFormat

@@ -14,6 +14,7 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
+	extern Configurator laserRegioniConfig;
 	// inizializzo un intero di appoggio per non utilizzare argc
 	int n_par= argc;
 
@@ -40,13 +41,16 @@ int main(int argc, char const *argv[])
 	
 	cout << "The three file you passed were all correct" << endl;
 	DataSet *prova= new DataSet;
+	printData(prova);
 	ConfigFile *file = new ConfigFile();
-
+	
 	//file -> printAllParameters();
 	file -> load (new_argv_2);
 	//file -> printAllParameters();
 	Config2Data(prova);
 	printData(prova);
+	//elemento ***provaElemento;
+	leggiDatiInput(new_argv_1, prova);
 	delete prova;
 	return 1;
 }

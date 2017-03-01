@@ -301,6 +301,7 @@ bool ConfigFile::save( const char *filename )
   fclose(fd);
   return true;
 }
+
 /*
 int ConfigFile::printAllParameters()
 {

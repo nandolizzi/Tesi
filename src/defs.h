@@ -37,3 +37,7 @@ struct DataSet
 
 int Config2Data(DataSet *data1);
 void printData(DataSet *data1);
+long int fileRows(FILE *inputFile);
+int selezionaCaso(FILE *InFile);
+char * validateCFGDataRAW();
+void leggiDatiInput(const char *filename, DataSet *Data1/*,struct elemento ***CompleteMatrix*/);

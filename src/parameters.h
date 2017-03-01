@@ -31,7 +31,7 @@
 /*--------------------------------------------------------------*\
 	Definizione struttura dati di configurazione del programma
 \*--------------------------------------------------------------*/
-typedef struct Configurator 
+typedef struct Configurator
 {
 	char		projectName[MAX_STR_LEN];			//Nome progetto e file di log
 	char		inputDataFileName[MAX_STR_LEN];	//Nome file dati di input
@@ -123,6 +123,8 @@ typedef struct Configurator
 /*-------------------------------------------*\
 	Prototipi di funzioni
 \*-------------------------------------------*/
+
+
 
 char * selectFormat(int tipo);
 
