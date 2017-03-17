@@ -1,23 +1,18 @@
-﻿Compilazione avviata 17/03/2017 11:35:58.
+﻿Compilazione avviata 17/03/2017 15:39:45.
      1>Progetto "C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Tesi.vcxproj" sul nodo 2 (destinazioni: Build).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\Nando\Documents\Eigen_Lib_SRCS\Eigen /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\config_file.cpp src\defs.cpp src\main.cpp src\tools.cpp
-         config_file.cpp
-     1>src\config_file.cpp(122): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211): vedere la dichiarazione di 'fopen'
-     1>src\config_file.cpp(291): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211): vedere la dichiarazione di 'fopen'
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\Nando\Documents\Eigen_Lib_SRCS\Eigen /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\defs.cpp
          defs.cpp
-     1>src\defs.cpp(44): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-     1>src\defs.cpp(45): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-     1>src\defs.cpp(203): warning C4018: '<': errata corrispondenza tra signed e unsigned
-     1>src\defs.cpp(157): warning C4101: 'punti_selezionati': variabile locale senza riferimenti
-     1>src\defs.cpp(313): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
-     1>src\defs.cpp(262): warning C4101: 'check': variabile locale senza riferimenti
-         main.cpp
-         tools.cpp
-     1>src\tools.cpp(24): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211): vedere la dichiarazione di 'fopen'
+     1>src\defs.cpp(34): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+     1>src\defs.cpp(35): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+     1>src\defs.cpp(193): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     1>src\defs.cpp(147): warning C4101: 'punti_selezionati': variabile locale senza riferimenti
+     1>src\defs.cpp(303): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+     1>src\defs.cpp(252): warning C4101: 'check': variabile locale senza riferimenti
+     1>src\defs.cpp(380): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     1>src\defs.cpp(365): warning C4101: 'v': variabile locale senza riferimenti
+     1>src\defs.cpp(366): warning C4101: 'ip': variabile locale senza riferimenti
+     1>src\defs.cpp(367): warning C4101: 'delta': variabile locale senza riferimenti
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Release\Tesi.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Release\Tesi.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Release\Tesi.lib" /MACHINE:X86 /SAFESEH Release\config_file.obj
          Release\error.obj
@@ -34,4 +29,4 @@
 
 Compilazione completata.
 
-Tempo trascorso 00:00:03.60
+Tempo trascorso 00:00:02.45

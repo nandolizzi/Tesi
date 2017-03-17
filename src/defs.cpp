@@ -3,7 +3,6 @@
 #include <Core>
 #include <vector>
 
-
 #include "defs.h"
 #include "const.h"
 #include"tools.h"
@@ -13,15 +12,6 @@ using namespace std;
 
 #define tempMin 1000000000
 #define tempMax -1000
-
-void setItem(Item &n_it, float n, float e, float q, int identity, const std::pair<int, int>& c)
-{
-	n_it.nord = n;
-	n_it.est = e;
-	n_it.quota = q;
-	n_it.id = identity;
-	n_it.coordinate = c;
-};
 
 int Config2Data(DataSet *data1)
 {
@@ -234,7 +224,7 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 		
 	}
 
-	//buildMatriceSparsa(data1, points, data1->widthGrid, data1->heightGrid);
+	buildMatriceSparsa(data1, points, data1->widthGrid, data1->heightGrid);
 	
 	//free(out_file);
 
@@ -321,7 +311,7 @@ int  Leggi_SinglePulse_xyz(list<Item>&points, DataSet *data, int tot_ele, FILE *
 
 		printf("\n\t\tPunti raw totali : %ld",punti);
 		printf("\n\t\tPunti buttati : %ld",puntiButtati);
-		writeList(points, "prova_XY.txt");
+		//writeList(points, "prova_XY.txt");
    
 	data->numPoints = punti_selezionati;
 	if (laserRegioniConfig.showAdditionalInfos)
@@ -369,109 +359,42 @@ int VerificaPunto(char *str,FILE *InFile)
 	return numero_sottostr++;
 };
 
-/*void buildMatriceSparsa(DataSet *data1,List& points, int rows, int col)
+void buildMatriceSparsa(DataSet *data1,list<Item>& points, int rows, int col)
 {
 	int emptyCells= 0,m;
 	double				v[SHRT_MAX];
 	long				ip[SHRT_MAX];
 	float				delta;
 
-	List singleCell;
-	cout << "QUI" << endl;
+	points.sort(compare_index_then_value);
+	writeList(points, "prova_sort.txt");
+	map<std::pair<int, int>, std::vector<float>> item_map;
+	item_map = list2map(points);
 
-	ElementNode *temp = points.getFirstNode();
-
-	for ( ; temp != NULL; temp = temp -> next_element )
+	for (int i = 0; i < 5; ++i)   //scorre le righe
 	{
-		for ( int i = 0; i < rows; i++ )   //scorre le righe
-		{ 
-			m= i *rows;
-			for (int j = 0; j < col; j++ )  //scorro le colonne	
+		m = i *rows;
+		for (int j = 0; j < 10; ++j)  //scorro le colonne	
+		{
 			{
+				for (int k = 0; k< item_map[std::make_pair(i, j)].size(); ++k)
 				{
-					emptyCells++;
-					if (!(singleCell.writeList("Sublist.txt")))
-						return;
-					//data1->z[m+j] = QUOTA_BUCHI;
-					
+					std::pair<int, int> b = std::make_pair(i, j);
+					std::cout << "mymap[" << i << "," << j << "](" << k << "): " << item_map[b].at(k) << std::endl;
 				}
-				else
-				{
-					cout << "QUI else" << endl;
-				}
-				/*if ( !mtemp[i][j].est )   //controllo se la cella ij contiene valori
-				{
-					celleVuote++;
-					num = 0;
-					Data->z[m+j] = QUOTA_BUCHI;
-				}
-				else
-				{
-					if ( !mtemp[i][j].next)
-					{           
-						// unico punto
-						num = 1;
-						if( mtemp[i][j].tipo == 'L')   // accetto solo Last
-							Data->z[m+j]  = (float)mtemp[i][j].valore; // /(float)100; 
-	//						matSparsa[i][j] = (short) mtemp[i][j].valore; 
-						    
-					}
-					else	
-					{						
-						p = &mtemp[i][j]; 
-						num = 1;
-						v[0] =  mtemp[i][j].valore;
-						k = 0;
-
-						while ( (*p).next )
-						{ 
-							if ( p->tipo == 'L' && p->valore != QUOTA_BUCHI)
-							{
-								v[k] =  p->valore;
-								k++;
-							}
-							p = p->next;						  
-						}
-
-						num = k;
-						if ( num )   // else erano solo First num = 0
-						{
-						  
-							ordina( v, ip, num, num, 1, 0 );  //ordinamento decrescente
-	//						OrdinaVet ( v, ip, num, num, 1, 0 );  //ordinamento decrescente
-
-							delta = (float)(v[ip[num-1]]-v[ip[0]]);
-	//APRILE05:OUTLIER  se delta > di sono outlier?
-							if ( fabs(delta) > laserRegioniConfig.dislivelloMatriceSparsa)
-							{
-								Data->z[m+j] = (float)v[ip[num-1]]; // /(float)100; // Punto più alto ( ricerca edifici ) 
-	//							matSparsa[i][j]=(short)(v[ip[num-1]]); // Punto più alto ( ricerca edifici )  //MAGGIO05
-	//							matSparsa[i][j]=(short)(v[ip[0]]);
-							}
-							else
-							{
-								if ( num%2 )
-									Data->z[m+j] = (float)v[ip[num/2]]; // /(float)100;
-	//								matSparsa[i][j] = (short) (v[ip[num/2]]);
-								else
-								{
-									// Data->z[m+j] = (float)v[ip[num/2]]; // /(float)100;
-	//								matSparsa[i][j] = (short) v[ip[num/2]];
-									Data->z[m+j] = (float) ((v[ip[num/2]]+v[ip[num/2-1]])/2);
-								}
-							}
-						}  // if num
-					}      // else su non unico punto
-				}          // else su cella non vuota
-				MaxD = num > MaxD ? num : MaxD;
-				if(num > 255) num = 255;
-	//			*(densita+i*Walt+j) = (unsigned char)num;
-				*(densita+m+j) = (unsigned char)num;
-			}             //for j
-		}                 //for i
+			}
+		}
 	}
-		if (!(singleCell.writeList("Sublist.txt")))
-			return;
-		cout << "empty cells:"<< emptyCells << endl;
-		return;
-};*/
+
+	for (int i = 0; i < rows; i++)   //scorre le righe
+	{
+		m = i *rows;
+		for (int j = 0; j < col; j++)  //scorro le colonne	
+		{
+			{
+
+			}
+		}
+	}
+					return;
+};

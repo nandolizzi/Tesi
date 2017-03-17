@@ -64,5 +64,6 @@ int main(int argc, char const *argv[])
 	leggiDatiInput(new_argv_1, prova, raw_points);
 	delete prova;
 	delete file;
+	cout << "Torno nel main" << endl;
 	return 1;
 }
