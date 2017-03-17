@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <Core>
+#include <list>
 
 #include "input_validate.h"
 #include "parameters.h"
@@ -12,8 +13,13 @@
 
 using namespace std;
 
+
 int main(int argc, char const *argv[])
 {
+	//vector <Element> c[2];
+	//cout << "dimensioni: " << sizeof(c) << endl;
+	//free (c);
+
 	extern Configurator laserRegioniConfig;
 	// inizializzo un intero di appoggio per non utilizzare argc
 	int n_par= argc;
@@ -40,17 +46,23 @@ int main(int argc, char const *argv[])
 		return 1;
 	
 	cout << "The three file you passed were all correct" << endl;
+	/* Inizializzo la variabile che conterrà la lista. */
+	//list raw_points;
+	std::list<Item> raw_points;
+	/* Inizializzo una variabile DataSet */
 	DataSet *prova= new DataSet;
-	printData(prova);
+	//printData(prova);
+	/* Inizializzo la variabile utilizzata per la lettura del file di configurazione. */
 	ConfigFile *file = new ConfigFile();
 	
 	//file -> printAllParameters();
 	file -> load (new_argv_2);
 	//file -> printAllParameters();
 	Config2Data(prova);
-	printData(prova);
-	//elemento ***provaElemento;
-	leggiDatiInput(new_argv_1, prova);
+	//printData(prova);
+	
+	leggiDatiInput(new_argv_1, prova, raw_points);
 	delete prova;
+	delete file;
 	return 1;
 }

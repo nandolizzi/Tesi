@@ -113,6 +113,11 @@
 #define	 SUCCESS	0	
 #define  ERROR	(!SUCCESS)
 
+ #define  N_BORDO  2        //N_Bordo * passo spline : dimensione del bordo dei dati di input per le spline (problema di bordo delle spline)
+
+#define QUOTA_BUCHI -10000
+#define QUOTA_MAX 20000
+
 /*---------------------------*\
 	Definizioni dei Tipi
 \*---------------------------*/
