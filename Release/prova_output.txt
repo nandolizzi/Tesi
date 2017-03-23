@@ -1,0 +1,3 @@
+celle totali: 365472
+celle vuote: 310662
+celle piene: 54810

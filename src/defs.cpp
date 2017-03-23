@@ -5,7 +5,8 @@
 
 #include "defs.h"
 #include "const.h"
-#include"tools.h"
+#include "tools.h"
+#include "output_tools.h"
 
 using namespace Eigen;
 using namespace std;
@@ -13,10 +14,10 @@ using namespace std;
 #define tempMin 1000000000
 #define tempMax -1000
 
+extern Configurator laserRegioniConfig;
+
 int Config2Data(DataSet *data1)
 {
-	extern Configurator laserRegioniConfig;
-
 	if (strstr(laserRegioniConfig.projectName, ".prj") == NULL)
 		strcat_s(laserRegioniConfig.projectName, strlen(".prj") + 1, ".prj");
 
@@ -113,7 +114,6 @@ int selezionaCaso(FILE *InFile)
 	\*------------------------------------------------------------------------------------*/
 char * validateCFGDataRAW()
 {
-	extern Configurator laserRegioniConfig;
 
 	if (laserRegioniConfig.gridWidth == NONE)
 		return "gridWidth";
@@ -130,7 +130,6 @@ char * validateCFGDataRAW()
 
 void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 {
-	extern Configurator laserRegioniConfig;
 	char nomeFileInput[255] = "\0";
 	const char * FName = "leggiDatiInput";
 	/* Commento le due inizializzazioni delle matrici perché le faccio in maniera diversa */
@@ -146,7 +145,6 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 
 	int  maxele;					//numero totale di righe nel file input
 	long tot_grid_points;			//punti grd
-	long punti_selezionati;
 	long int i_dz = 0;	// Indice per Data1->dz
 	int colonne;
 	errno_t err;
@@ -174,9 +172,9 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 	/*CompleteMatrixInit.resize(Data1->heightGrid * Data1->widthGrid);*/
 
 	tipo = 0;
-	cout << laserRegioniConfig.inputDataFileName << endl;
+	//std::cout << laserRegioniConfig.inputDataFileName << endl;
 	char * nomeDaTastiera = (char*)filename;
-	cout << nomeDaTastiera << endl;
+	//std::cout << nomeDaTastiera << endl;
 
 	//err = fopen_s(&inputFile, "test5_3.txt", "r");
 	err = fopen_s(&inputFile, nomeDaTastiera, "r");
@@ -207,7 +205,7 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 	colonne = selezionaCaso(inputFile);
 	if (colonne != 3)
 	{
-		cout << "Error! The data file format is inappropriate" << endl;
+		std::cout << "Error! The data file format is inappropriate" << endl;
 		return;
 	}
 
@@ -216,24 +214,21 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 
 	printf("\n\t\tPunti raw selezionati : %ld\n", data1->numPoints);
 
-	cout << "Width (min - max): " << data1->xminInput << "-" << data1->xmaxInput << endl;
-	cout << "Height (min - max): " << data1->yminInput << "-" << data1->ymaxInput << endl;
-	cout << "Matrice: " << data1->widthGrid << "x" << data1->heightGrid << "=" << data1->widthGrid*data1->heightGrid << endl;
-	cout << "Grigliatura: " << data1->pelsX << endl;
+	std::cout << "Width (min - max): " << data1->xminInput << "-" << data1->xmaxInput << endl;
+	std::cout << "Height (min - max): " << data1->yminInput << "-" << data1->ymaxInput << endl;
+	std::cout << "Matrice: " << data1->heightGrid << "x" << data1->widthGrid << "=" << data1->widthGrid*data1->heightGrid << endl;
+	std::cout << "Grigliatura: " << data1->pelsX << endl;
 
 	if (data1->numPoints == 0) {
 		errore(NO_SELECTED_DATA_ERROR, " Punti Selezionati=0", FName, TRUE);
 
 	}
-
-	buildMatriceSparsa(data1, points, data1->widthGrid, data1->heightGrid);
-
-	//free(out_file);
+	buildMatriceSparsa(data1, points/*, data1->heightGrid, data1->widthGrid*/);
 
 	//riempie matrice sparsa
+	fill_empty_cells(data1->z/*, data1->heightGrid, data1->widthGrid*/);
 	//Accresci(	Data1, Data1->heightGrid, Data1->widthGrid, Data1->pelsX);
 
-	//freeMatrix(Data1->heightGrid,MatrixInit);
 	data1->Xg = (2 * data1->LoLeftX + data1->widthGrid * data1->pelsX) / 2;
 	data1->Yg = (2 * data1->LoLeftY + data1->heightGrid * data1->pelsX) / 2;
 
@@ -244,14 +239,12 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 
 int  Leggi_SinglePulse_xyz(list<Item>&points, DataSet *data, int tot_ele, FILE *inputFile)
 {
-	extern Configurator laserRegioniConfig;
 	int			punti_selezionati = 0, x = 0, y = 0;
 	double			t1, t2, t3;
 	double			tempXminTot = tempMin, tempXmaxTot = tempMax, tempYminTot = tempMin, tempYmaxTot = tempMax, tempZmin = tempMin, tempZmax = tempMax;
 	double 			tempX, tempY, tempZ;
 	long int		j;
 	int puntiButtati = 0;
-	int check;
 	char punto[1000];
 	int colonne = 0;
 	long int punti = 0;
@@ -271,7 +264,8 @@ int  Leggi_SinglePulse_xyz(list<Item>&points, DataSet *data, int tot_ele, FILE *
 	for (j = 0; j < tot_ele * 3; j = j + 3)
 	{
 		colonne = VerificaPunto(punto, inputFile);
-		if (colonne == 3){
+		if (colonne == 3)
+		{
 			punti++;
 			sscanf_s(punto, "%lf %lf %lf", &t1, &t2, &t3);
 			tempX = t1;    //  i_array[j]=coordinata Est=x
@@ -297,8 +291,9 @@ int  Leggi_SinglePulse_xyz(list<Item>&points, DataSet *data, int tot_ele, FILE *
 				y = (long)((tempY - data->LoLeftY) / data->pelsX);
 
 				/* Estrapolo i valori di riga e colonna della futura matrice grigliata */
-				int col = data->heightGrid - (int)y - 1;
-				int row = (int)x;
+				int col = (int)x;
+				int row = data->heightGrid - (int)y - 1;
+				
 
 				/* Salvo i valori appena letti in una struct Item e li metto all'interno della lista.
 					Faccio corrispondere id a punti selezionati, tale variabile aumenta di iterazione in iterazione. */
@@ -306,9 +301,9 @@ int  Leggi_SinglePulse_xyz(list<Item>&points, DataSet *data, int tot_ele, FILE *
 				points.push_back(new_item);
 				punti_selezionati++;
 			}
+			else
+				puntiButtati++;
 		}
-		else
-			puntiButtati++;
 	}
 
 	printf("\n\t\tPunti raw totali : %ld", punti);
@@ -362,18 +357,28 @@ int VerificaPunto(char *str, FILE *InFile)
 };
 
 
-void buildMatriceSparsa(DataSet *data1, list<Item>& points, int rows, int col)
+void buildMatriceSparsa(DataSet *data1, list<Item>& points/*, int rows, int col*/)
 {
-	extern Configurator laserRegioniConfig;
+	const char			*FName = "buildMatriceSparsa";
 	int emptyCells = 0, m;
-	double				v[SHRT_MAX];
-	long				ip[SHRT_MAX];
-	float				delta;
+	int rows = data1->heightGrid;
+	int col = data1->widthGrid;
+	unsigned char *density = new unsigned char[data1->widthGrid*data1->heightGrid];
+	float	delta;
+	int MaxD = 0;
+	int counter = 0;
+	FILE *out_file;
+	const char* file_palette = NULL;
 
+	//writeList(points, "prova_sort.txt");
 	points.sort(compare_index_then_value);
 	//writeList(points, "prova_sort.txt");
 	map<std::pair<int, int>, std::vector<float>> item_map;
 	item_map = list2map(points);
+	//write_map(item_map, "prova_map.txt");
+
+	FILE *fd = fopen("prova_output.txt", "w");
+	int tot_celle = rows*col;
 
 	/*for (int i = 0; i < 5; ++i)   //scorre le righe
 	{
@@ -391,47 +396,85 @@ void buildMatriceSparsa(DataSet *data1, list<Item>& points, int rows, int col)
 	}*/
 	for (int i = 0; i < rows; ++i)   //scorre le righe
 	{
-		m = i *rows;
+		m = i *col;
 		for (int j = 0; j < col; ++j)  //scorro le colonne	
 		{
-			if (item_map.find(std::make_pair(i, j)) == item_map.end())
+			/* Se non viene trovato alcun elemento nella cella della mappa allora la si setta nulla. */
+			if (item_map.count(std::make_pair(i, j)) < 1/*item_map.find(std::make_pair(i, j)) == item_map.end()*/)
 			{
 				emptyCells++;
 				data1->z[m + j] = QUOTA_BUCHI;
 			}
 			else
 			{
+				/* Altrimenti valuto immediatamente la lunghezza del vettore di indice (pair) ij */
 				int vec_size = item_map[std::make_pair(i, j)].size();
+				/* Se la dimensione del vettore è pari a 1 allora il valore
+				appena letto viene passato al vettore z. */
 				if (vec_size == 1)
 				{
 					data1->z[m + j] = item_map[std::make_pair(i, j)].back();
-					cout << "Un solo elemento" << endl;
 				}
 				else
 				{
+					/* Altrimenti si valuta la differenza tra i due elementi con valore maggiore e valore minore. */
 					delta = item_map[std::make_pair(i, j)].back() - item_map[std::make_pair(i, j)].front();
-					if (abs(delta) > laserRegioniConfig.dislivelloMatriceSparsa)
+					/* Dato che il programma non legge un float in ingresso lo scrivo nel file config * 100,
+					quindi sotto lo divido per 100 e lo casto. */
+					float dislivello = (float)(laserRegioniConfig.dislivelloMatriceSparsa) / 100;
+					/* Valuto il valore di delta rispetto al dislivello inserito nel file config. */
+					if (delta > dislivello)
 					{
+						/* Se il delta è maggiore del dislivello allora  prendo l'ultimo elemento del vettore. */
 						data1->z[m + j] = item_map[std::make_pair(i, j)].back();
-						cout << "delta maggiore di 0.3" << endl;
 					}
 					else
 					{
 						if (vec_size % 2)
 						{
+							/* Altrimenti, se il vettore contiene un numero pari di elelenti, prendo l'elemento che si trova al centro.*/
 							data1->z[m + j] = item_map[std::make_pair(i, j)].at((vec_size - 1) / 2);
-							cout << "delta minore di 0.3 e pari" << endl;
 						}
 						else
 						{
+							/* Se invece il numero di elelemti è dispari, faccio la somma dell'elemento precedente a quello che si trova
+							a metà del vettore e dell'elemento che si trova proprio a metà del vettore diviso per due. */
 							data1->z[m + j] = (item_map[std::make_pair(i, j)].at((vec_size - 1) / 2) + item_map[std::make_pair(i, j)].at((vec_size - 1) / 2 + 1)) / 2;
-							cout << "delta minore di 0.3 e dispari" << endl;
 						}
 					}
 				}
+				/* Per adesso ho aggiunto questa merda ma devo chiedere alla professoressa. */
+				MaxD = vec_size > MaxD ? vec_size : MaxD;
+				if (vec_size > 255) vec_size = 255;
+				*(density + m + j) = (unsigned char)vec_size;
 			}
+			//std::cout << "dopo il sort!" << i << " " << j << endl;
 		}
 	}
-	cout << "fatto build matrice sparsa" << endl;
+	std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << endl;
+	fprintf(fd, "celle totali: %d\ncelle vuote: %d\ncelle piene: %d\n", tot_celle, emptyCells, (tot_celle - emptyCells));
+	//fprintf(fd, "LoLeftX: %f\tUpRightX: %f\tLoLeftY: %f\tUpRightY: %f\n", data1->LoLeftX, data1->UpRightX, data1->LoLeftY, data1->UpRightY);
+
+	if (laserRegioniConfig.tipoUscita >= LEVEL_3)
+	{
+		/*Creo il nome del file di output*/
+		string file_out_name = makeExtension(laserRegioniConfig.projectName, DENSITAPNT_EXT);
+		const char *file_out_name_char = file_out_name.c_str();
+
+		if (fopen_s(&out_file, file_out_name_char, "wb") != NULL)
+			errore(FILE_OPENWRITE_ERROR, (char*)file_out_name_char, FName, TRUE);
+
+		if (laserRegioniConfig.paletteFileName != NULL)
+		{
+			string nome_file_palette = makeExtension(laserRegioniConfig.paletteFileName, DENSITAPNT_ACT);
+			file_palette = nome_file_palette.c_str();
+		}
+		HeaderWrPalette(out_file, rows, col, (char*)file_palette);
+		InvertiRaw2Bmp(density, rows, col, 1078, out_file);
+		fclose(out_file);
+	}
+
+	delete density;
+	fclose(fd);
 	return;
 };

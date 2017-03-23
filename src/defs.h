@@ -48,4 +48,4 @@ char * validateCFGDataRAW();
 void leggiDatiInput(const char *filename, DataSet *data1, std::list<Item>&points);
 int Leggi_SinglePulse_xyz(std::list<Item>&points, DataSet *data1, int tot_ele, FILE *inputFile);
 int VerificaPunto(char *str,FILE *InFile);
-void buildMatriceSparsa(DataSet *data1, std::list<Item>&points, int rows, int col);
+void buildMatriceSparsa(DataSet *data1, std::list<Item>&points/*, int rows, int col*/);
