@@ -126,24 +126,19 @@ char * validateCFGDataRAW()
 	return NULL;
 }
 
-
-
 void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 {
 	char nomeFileInput[255] = "\0";
 	const char * FName = "leggiDatiInput";
 	/* Commento le due inizializzazioni delle matrici perché le faccio in maniera diversa */
-	//unsigned short   **MatrixInit;	//Matrice altezze temporanea e finale
-	//struct elemento **CompleteMatrixInit = NULL;	//matrice di struct elemento temporanea
 	char * paramError = NULL;
 
 	short int			tipo;
 	/* La prof li usava per il file del debug, per ora li commento. Se non necessito del debug li spengerò. */
 	//char				*out_file = NULL, *tmp_out_file =NULL;
 	//long int			i_dz = 0;	// Indice per Data1->dz
-	long				celleVuote = 0;
 
-	int  maxele;					//numero totale di righe nel file input
+	int  tot_nodes;					//numero totale di righe nel file input
 	long tot_grid_points;			//punti grd
 	long int i_dz = 0;	// Indice per Data1->dz
 	int colonne;
@@ -158,35 +153,28 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 		il file di configurazione. */
 	strcpy_s(nomeFileInput, 255, laserRegioniConfig.inputDataFileName);
 
-	/* Qua devo allocare due matrici, la MatrixInit e la CompleteMatrix... lui le chiama in una singola funzione perché in realtà
-		quella è una funzione che controlla l'allocazione di tali matrici(-> errore), quindi all'interno di quella richiama
-		la funzione per allocarle entrambe.
-
-		In realtà sembra che non mi serva la matrice CompleteMatrix... */
-
-	/*MatrixXi MatrixInit;
-	MatrixInit.resize( data1->heightGrid, data1->widthGrid);*/
-
-	//std::vector <elemento> CompleteMatrixInit(Data1->heightGrid * Data1->widthGrid);
+	/* Dichiaro un vettore di tipo dataset con un numenro di elementi pari a righe per colonne. */
 	vector <DataSet> dataset_vector(data1->heightGrid * data1->widthGrid);
-	/*CompleteMatrixInit.resize(Data1->heightGrid * Data1->widthGrid);*/
-
 	tipo = 0;
-	//std::cout << laserRegioniConfig.inputDataFileName << endl;
 	char * nomeDaTastiera = (char*)filename;
-	//std::cout << nomeDaTastiera << endl;
 
-	//err = fopen_s(&inputFile, "test5_3.txt", "r");
+	/* Effettuo un controllo sull'apertura del file dati.*/
 	err = fopen_s(&inputFile, nomeDaTastiera, "r");
 	if (err != 0)
 		errore(FILE_OPENREAD_ERROR, laserRegioniConfig.inputDataFileName, FName, TRUE);
 
 	rewind(inputFile);
 
-	printf("\nInizio conteggio punti...");
-	maxele = fileRows(inputFile);           //maxele : tutti i punti presenti nel file raw
+	std::cout << "Width (min - max): " << data1->xminInput << "-" << data1->xmaxInput << endl;
+	std::cout << "Height (min - max): " << data1->yminInput << "-" << data1->ymaxInput << endl;
+	std::cout << "Matrice: " << data1->heightGrid << "x" << data1->widthGrid << "=" << data1->widthGrid*data1->heightGrid << endl;
+	std::cout << "Grigliatura: " << data1->pelsX << endl;
 
-	tot_grid_points = (long int)((data1->widthGrid)*(data1->heightGrid));
+	printf("\nInizio conteggio punti...");
+	//nodi totali : tutti i punti presenti nel file raw
+	tot_nodes = fileRows(inputFile);           
+	/* Numero totale dei putni del grigliato. */
+	tot_grid_points = data1->widthGrid * data1->heightGrid; 
 
 	//ALLOCO SEMPRE IL VETTORE dz E POI RIMANE A ZERO NEL CASO DI UN SINGOLO IMPULSO
 
@@ -195,7 +183,7 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 
 
 
-	printf("\n\t\tPunti in input: %ld \n", maxele);
+	printf("\n\t\tPunti in input: %ld \n", tot_nodes);
 	printf("\t\tPunti Griglia: %ld \n", tot_grid_points);
 	printf("\nInizio lettura dati RAW...%s\n", laserRegioniConfig.inputDataFileName);
 
@@ -209,25 +197,23 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 		return;
 	}
 
-	Leggi_SinglePulse_xyz(points, data1, maxele, inputFile);
+	/* Effettuo la lettura del file dati.*/
+	Leggi_SinglePulse_xyz(points, data1, tot_nodes, inputFile);
 	fclose(inputFile);
 
 	printf("\n\t\tPunti raw selezionati : %ld\n", data1->numPoints);
 
-	std::cout << "Width (min - max): " << data1->xminInput << "-" << data1->xmaxInput << endl;
-	std::cout << "Height (min - max): " << data1->yminInput << "-" << data1->ymaxInput << endl;
-	std::cout << "Matrice: " << data1->heightGrid << "x" << data1->widthGrid << "=" << data1->widthGrid*data1->heightGrid << endl;
-	std::cout << "Grigliatura: " << data1->pelsX << endl;
-
-	if (data1->numPoints == 0) {
+	if (data1->numPoints == 0) 
+	{
 		errore(NO_SELECTED_DATA_ERROR, " Punti Selezionati=0", FName, TRUE);
 
 	}
-	buildMatriceSparsa(data1, points/*, data1->heightGrid, data1->widthGrid*/);
 
-	//riempie matrice sparsa
-	fill_empty_cells(data1->z/*, data1->heightGrid, data1->widthGrid*/);
-	//Accresci(	Data1, Data1->heightGrid, Data1->widthGrid, Data1->pelsX);
+	/* Costruisco la matrice sparsa... Per ora faccio solo la ricerca dei punti alti. */
+	buildMatriceSparsa(data1, points, data1->heightGrid, data1->widthGrid);
+
+	//riempie matrice sparsa... Non so se effettivamente mi serve, per ora l'ho riscritta.
+	fill_empty_cells(data1->z, data1->heightGrid, data1->widthGrid);
 
 	data1->Xg = (2 * data1->LoLeftX + data1->widthGrid * data1->pelsX) / 2;
 	data1->Yg = (2 * data1->LoLeftY + data1->heightGrid * data1->pelsX) / 2;
@@ -236,93 +222,6 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 	//	esporta(Data1);  //$ economia di variabili (dim)?
 
 }
-
-int  Leggi_SinglePulse_xyz(list<Item>&points, DataSet *data, int tot_ele, FILE *inputFile)
-{
-	int			punti_selezionati = 0, x = 0, y = 0;
-	double			t1, t2, t3;
-	double			tempXminTot = tempMin, tempXmaxTot = tempMax, tempYminTot = tempMin, tempYmaxTot = tempMax, tempZmin = tempMin, tempZmax = tempMax;
-	double 			tempX, tempY, tempZ;
-	long int		j;
-	int puntiButtati = 0;
-	char punto[1000];
-	int colonne = 0;
-	long int punti = 0;
-
-	tempXminTot = 1000000000;
-	tempYminTot = 1000000000;
-	tempXmaxTot = -1000;
-	tempYmaxTot = -1000;
-	tempZmin = 1000000000;
-	tempZmax = -1000;
-
-	fgets(punto, 1000, inputFile);  //butto la prima riga
-
-
-	/* tot_ele contava il numero di righe del file di dati => lo moltiplico per il numero di colonne del file*/
-
-	for (j = 0; j < tot_ele * 3; j = j + 3)
-	{
-		colonne = VerificaPunto(punto, inputFile);
-		if (colonne == 3)
-		{
-			punti++;
-			sscanf_s(punto, "%lf %lf %lf", &t1, &t2, &t3);
-			tempX = t1;    //  i_array[j]=coordinata Est=x
-			tempY = t2;   //  i_array[j+1]=coordinata Nord=y
-			tempZ = t3;	//  i_array[j+2]=coordinata z
-
-			if (laserRegioniConfig.showAdditionalInfos)
-			{
-				tempXminTot = (tempX > tempXminTot ? tempXminTot : tempX);
-				tempXmaxTot = (tempX < tempXmaxTot ? tempXmaxTot : tempX);
-				tempYminTot = (tempY > tempYminTot ? tempYminTot : tempY);
-				tempYmaxTot = (tempY < tempYmaxTot ? tempYmaxTot : tempY);
-			}
-
-			tempZmin = (tempZ > tempZmin ? tempZmin : tempZ);
-			tempZmax = (tempZ < tempZmax ? tempZmax : tempZ);
-
-			if (tempX >= data->LoLeftX  && tempX < data->UpRightX && tempY >= data->LoLeftY && tempY < data->UpRightY)
-			{
-				Item new_item;
-				//si scaricano tutti i punti all'elemento di griglia minore
-				x = (long)((tempX - data->LoLeftX) / data->pelsX);
-				y = (long)((tempY - data->LoLeftY) / data->pelsX);
-
-				/* Estrapolo i valori di riga e colonna della futura matrice grigliata */
-				int col = (int)x;
-				int row = data->heightGrid - (int)y - 1;
-				
-
-				/* Salvo i valori appena letti in una struct Item e li metto all'interno della lista.
-					Faccio corrispondere id a punti selezionati, tale variabile aumenta di iterazione in iterazione. */
-				setItem(new_item, tempX, tempY, tempZ, punti_selezionati, std::make_pair(row, col));
-				points.push_back(new_item);
-				punti_selezionati++;
-			}
-			else
-				puntiButtati++;
-		}
-	}
-
-	printf("\n\t\tPunti raw totali : %ld", punti);
-	printf("\n\t\tPunti buttati : %ld", puntiButtati);
-	//writeList(points, "prova_XY.txt");
-
-	data->numPoints = punti_selezionati;
-	if (laserRegioniConfig.showAdditionalInfos)
-	{
-		data->xminInput = (float)tempXminTot;
-		data->xmaxInput = (float)tempXmaxTot;
-		data->yminInput = (float)tempYminTot;
-		data->ymaxInput = (float)tempYmaxTot;
-	}
-	data->zmin = (float)tempZmin;
-	data->zmax = (float)tempZmax;
-
-	return punti;
-};
 
 /*------------------------------------------------------------------------------------*\
 	Nome routine:
@@ -354,127 +253,4 @@ int VerificaPunto(char *str, FILE *InFile)
 
 
 	return numero_sottostr++;
-};
-
-
-void buildMatriceSparsa(DataSet *data1, list<Item>& points/*, int rows, int col*/)
-{
-	const char			*FName = "buildMatriceSparsa";
-	int emptyCells = 0, m;
-	int rows = data1->heightGrid;
-	int col = data1->widthGrid;
-	unsigned char *density = new unsigned char[data1->widthGrid*data1->heightGrid];
-	float	delta;
-	int MaxD = 0;
-	int counter = 0;
-	FILE *out_file;
-	const char* file_palette = NULL;
-
-	//writeList(points, "prova_sort.txt");
-	points.sort(compare_index_then_value);
-	//writeList(points, "prova_sort.txt");
-	map<std::pair<int, int>, std::vector<float>> item_map;
-	item_map = list2map(points);
-	//write_map(item_map, "prova_map.txt");
-
-	FILE *fd = fopen("prova_output.txt", "w");
-	int tot_celle = rows*col;
-
-	/*for (int i = 0; i < 5; ++i)   //scorre le righe
-	{
-	m = i *rows;
-	for (int j = 0; j < 10; ++j)  //scorro le colonne
-	{
-	{
-	for (int k = 0; k< item_map[std::make_pair(i, j)].size(); ++k)
-	{
-	std::pair<int, int> b = std::make_pair(i, j);
-	std::cout << "mymap[" << i << "," << j << "](" << k << "): " << item_map[b].at(k) << std::endl;
-	}
-	}
-	}
-	}*/
-	for (int i = 0; i < rows; ++i)   //scorre le righe
-	{
-		m = i *col;
-		for (int j = 0; j < col; ++j)  //scorro le colonne	
-		{
-			/* Se non viene trovato alcun elemento nella cella della mappa allora la si setta nulla. */
-			if (item_map.count(std::make_pair(i, j)) < 1/*item_map.find(std::make_pair(i, j)) == item_map.end()*/)
-			{
-				emptyCells++;
-				data1->z[m + j] = QUOTA_BUCHI;
-			}
-			else
-			{
-				/* Altrimenti valuto immediatamente la lunghezza del vettore di indice (pair) ij */
-				int vec_size = item_map[std::make_pair(i, j)].size();
-				/* Se la dimensione del vettore è pari a 1 allora il valore
-				appena letto viene passato al vettore z. */
-				if (vec_size == 1)
-				{
-					data1->z[m + j] = item_map[std::make_pair(i, j)].back();
-				}
-				else
-				{
-					/* Altrimenti si valuta la differenza tra i due elementi con valore maggiore e valore minore. */
-					delta = item_map[std::make_pair(i, j)].back() - item_map[std::make_pair(i, j)].front();
-					/* Dato che il programma non legge un float in ingresso lo scrivo nel file config * 100,
-					quindi sotto lo divido per 100 e lo casto. */
-					float dislivello = (float)(laserRegioniConfig.dislivelloMatriceSparsa) / 100;
-					/* Valuto il valore di delta rispetto al dislivello inserito nel file config. */
-					if (delta > dislivello)
-					{
-						/* Se il delta è maggiore del dislivello allora  prendo l'ultimo elemento del vettore. */
-						data1->z[m + j] = item_map[std::make_pair(i, j)].back();
-					}
-					else
-					{
-						if (vec_size % 2)
-						{
-							/* Altrimenti, se il vettore contiene un numero pari di elelenti, prendo l'elemento che si trova al centro.*/
-							data1->z[m + j] = item_map[std::make_pair(i, j)].at((vec_size - 1) / 2);
-						}
-						else
-						{
-							/* Se invece il numero di elelemti è dispari, faccio la somma dell'elemento precedente a quello che si trova
-							a metà del vettore e dell'elemento che si trova proprio a metà del vettore diviso per due. */
-							data1->z[m + j] = (item_map[std::make_pair(i, j)].at((vec_size - 1) / 2) + item_map[std::make_pair(i, j)].at((vec_size - 1) / 2 + 1)) / 2;
-						}
-					}
-				}
-				/* Per adesso ho aggiunto questa merda ma devo chiedere alla professoressa. */
-				MaxD = vec_size > MaxD ? vec_size : MaxD;
-				if (vec_size > 255) vec_size = 255;
-				*(density + m + j) = (unsigned char)vec_size;
-			}
-			//std::cout << "dopo il sort!" << i << " " << j << endl;
-		}
-	}
-	std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << endl;
-	fprintf(fd, "celle totali: %d\ncelle vuote: %d\ncelle piene: %d\n", tot_celle, emptyCells, (tot_celle - emptyCells));
-	//fprintf(fd, "LoLeftX: %f\tUpRightX: %f\tLoLeftY: %f\tUpRightY: %f\n", data1->LoLeftX, data1->UpRightX, data1->LoLeftY, data1->UpRightY);
-
-	if (laserRegioniConfig.tipoUscita >= LEVEL_3)
-	{
-		/*Creo il nome del file di output*/
-		string file_out_name = makeExtension(laserRegioniConfig.projectName, DENSITAPNT_EXT);
-		const char *file_out_name_char = file_out_name.c_str();
-
-		if (fopen_s(&out_file, file_out_name_char, "wb") != NULL)
-			errore(FILE_OPENWRITE_ERROR, (char*)file_out_name_char, FName, TRUE);
-
-		if (laserRegioniConfig.paletteFileName != NULL)
-		{
-			string nome_file_palette = makeExtension(laserRegioniConfig.paletteFileName, DENSITAPNT_ACT);
-			file_palette = nome_file_palette.c_str();
-		}
-		HeaderWrPalette(out_file, rows, col, (char*)file_palette);
-		InvertiRaw2Bmp(density, rows, col, 1078, out_file);
-		fclose(out_file);
-	}
-
-	delete density;
-	fclose(fd);
-	return;
 };

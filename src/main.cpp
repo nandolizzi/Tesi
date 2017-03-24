@@ -10,6 +10,7 @@
 #include "config_file.h"
 #include "const.h"
 #include "defs.h"
+#include "output_tools.h"
 
 using namespace std;
 
@@ -62,6 +63,7 @@ int main(int argc, char const *argv[])
 	//printData(prova);
 	
 	leggiDatiInput(new_argv_1, prova, raw_points);
+	writeBpw(laserRegioniConfig.projectName, prova);
 	delete prova;
 	delete file;
 	cout << "Torno nel main" << endl;

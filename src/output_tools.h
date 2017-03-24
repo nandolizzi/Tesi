@@ -8,6 +8,7 @@
 #include "config_file.h"
 #include "const.h"
 #include "parameters.h"
+#include "defs.h"
 
 #ifndef DEF_HEADER
 #define DEF_HEADER
@@ -27,4 +28,5 @@ void   HeaderWrPalette(FILE *bmp, long int Width, long int Height, char * nomeFi
 void InvertiRaw2Bmp_h(HEADER *h, FILE *bmp);
 void InvertiRaw2Bmp(unsigned char *bitmap, long int Height, long int Width, long int offset, FILE *bmp);
 void writePalette(FILE * out_file, FILE * palette);
+void writeBpw(char *filename, DataSet *data1);
 

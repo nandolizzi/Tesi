@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-
+extern Configurator laserRegioniConfig;
 
 std::string makeExtension(const char *filename, const char *newExtension)
 {
@@ -131,10 +131,6 @@ void   HeaderWrPalette(FILE *bmp, long int Width, long int Height, char * nomeFi
 
 }
 
-
-
-
-
 /***************************************************************************
 
 InvertiRaw2Bmp_h
@@ -165,8 +161,6 @@ void InvertiRaw2Bmp_h(HEADER *h, FILE *bmp)
 
 }
 
-
-
 /****************************************************************************
 
 InvertiRaw2Bmp
@@ -175,9 +169,7 @@ Legge l'immagine dalla bitmap del file RAW e scrive il file BMP
 
 ver. 3.0 $ 04/03/99 $
 
-***************************************************************************/
-
-void InvertiRaw2Bmp(unsigned char *bitmap, long int Height, long int Width,
+***************************************************************************/void InvertiRaw2Bmp(unsigned char *bitmap, long int Height, long int Width,
 	long int offset, FILE *bmp)
 {
 	int i, j, pudding;
@@ -237,3 +229,17 @@ void writePalette(FILE * out_file, FILE * palette)
 	}
 
 }
+
+void writeBpw(char *filename, DataSet *data1)
+{
+	FILE *out;
+	const char *		FName = "scrivi_bpw";
+
+	strcpy_s(&filename[strlen(filename) - 5], strlen(filename) - 5 + strlen("_Alto.bpw"), "_Alto.bpw");
+ 
+	if (fopen_s(&out, filename, "w") != NULL)
+		errore(FILE_OPENREAD_ERROR, laserRegioniConfig.projectName, FName, FALSE);
+	fprintf(out, "    %4.2f\n    0.0\n    0.0\n   -%4.2f\n    %9.2lf\n   %10.2lf\n", data1->pelsX, data1->pelsX, data1->LoLeftX, data1->LoLeftY + data1->heightGrid*data1->pelsX);
+
+	fclose(out);
+};
