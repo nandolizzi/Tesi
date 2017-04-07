@@ -1,6 +1,8 @@
 #include "tools.h"
 #include "output_tools.h"
 
+#include <Core>
+
 extern Configurator laserRegioniConfig;
 
 int  Leggi_SinglePulse_xyz(std::list<Item>&points, DataSet *data, int tot_ele, FILE *inputFile)
@@ -9,7 +11,7 @@ int  Leggi_SinglePulse_xyz(std::list<Item>&points, DataSet *data, int tot_ele, F
 	double			t1, t2, t3;
 	double			tempXminTot, tempXmaxTot, tempYminTot, tempYmaxTot, tempZmin, tempZmax;
 	double 			tempX, tempY, tempZ;
-	long int		j;
+	int	j;
 	int puntiButtati = 0;
 	char point[1000];
 	int colonne = 0;
@@ -72,7 +74,7 @@ int  Leggi_SinglePulse_xyz(std::list<Item>&points, DataSet *data, int tot_ele, F
 		}
 	}
 
-	std::cout << "\n\tPunti raw totali: %d" << punti << "\n\tPunti buttati : %d" << puntiButtati << std::endl;
+	std::cout << "\n\tPunti raw totali: " << punti << "\n\tPunti buttati : " << puntiButtati << std::endl;
 	//writeList(points, "prova_XY.txt");
 
 	data->numPoints = punti_selezionati;
@@ -153,7 +155,7 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 	int MaxD = 0;			//Densità massima
 	int counter = 0;
 	FILE *out_file;
-	const char* file_palette = NULL;
+	const char* file_palette_name_char = NULL;
 
 	points.sort(compare_index_then_value);
 	//writeList(points, "prova_sort.txt");
@@ -252,10 +254,10 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 
 		if (laserRegioniConfig.paletteFileName != NULL)
 		{
-			std::string nome_file_palette = makeExtension(laserRegioniConfig.paletteFileName, DENSITAPNT_ACT);
-			file_palette = nome_file_palette.c_str();
+			std::string file_palette_name = makeExtension(laserRegioniConfig.paletteFileName, DENSITAPNT_ACT);
+			file_palette_name_char = file_palette_name.c_str();
 		}
-		HeaderWrPalette(out_file, rows, col, (char*)file_palette);
+		HeaderWrPalette(out_file, col, rows, (char*)file_palette_name_char);
 		InvertiRaw2Bmp(density, rows, col, 1078, out_file);
 		fclose(out_file);
 	}
@@ -306,7 +308,6 @@ void write_map(std::map<std::pair<int, int>, std::vector<float>>&my_map, const c
 	fclose(fd);
 };
 
-
 void fill_empty_cells(float *matrice_sparsa, int rows, int col)
 {
 	std::cout << "Costruzione della matrice completa" << std::endl;
@@ -314,6 +315,13 @@ void fill_empty_cells(float *matrice_sparsa, int rows, int col)
 	float delta = 0.00;
 	//int rows = laserRegioniConfig.gridHeight;
 	//int col = laserRegioniConfig.gridWidth;
+
+	Eigen::MatrixXf temp(rows, col);
+
+	for (int i = 0; i < rows*col; ++i)
+	{
+		temp(i)= matrice_sparsa[i];
+	}
 
 	for (int i = 1; i < rows-1; ++i)
 	{
@@ -349,21 +357,28 @@ void fill_empty_cells(float *matrice_sparsa, int rows, int col)
 					float dislivello = (float)(laserRegioniConfig.dislivelloMatriceSparsa) / 100;
 					if (delta < dislivello)
 					{
-						if (vec_size % 2)   matrice_sparsa[i* col + j ] = neighbors[vec_size/2.0];
-						else          matrice_sparsa[i* col + j] = (neighbors[vec_size / 2] + neighbors[vec_size / 2 - 1]) / 2.0;
+						/*if (vec_size % 2)   matrice_sparsa[i* col + j ] = neighbors[vec_size/2.0];
+						else          matrice_sparsa[i* col + j] = (neighbors[vec_size / 2] + neighbors[vec_size / 2 - 1]) / 2.0;*/
+						if (vec_size % 2)   temp(i* col + j) = neighbors[vec_size / 2.0];
+						else          temp(i* col + j) = (neighbors[vec_size / 2] + neighbors[vec_size / 2 - 1]) / 2.0;
 					}
 					else
 					{
 						if (laserRegioniConfig.tipoRicerca == TIPORICERCA_EDIFICI)
-							matrice_sparsa[i* col + j] = neighbors[vec_size / 2];
+							temp(i* col + j) = neighbors[vec_size / 2];
 						else
-							matrice_sparsa[i* col + j] = neighbors[vec_size / 2-1];
+							temp(i* col + j) = neighbors[vec_size / 2-1];
 					}
 
 				}
 				neighbors.clear();
 			}
 		}
+	}
+	
+	for (int i = 0; i < rows*col ; ++i)
+	{
+		matrice_sparsa[i] = temp(i);
 	}
 	std::cout << "Fine!!" << std::endl;
 	return;

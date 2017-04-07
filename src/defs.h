@@ -10,6 +10,10 @@
 #include "parameters.h"
 
 
+/****************************************************************************************\
+	DataSet, struttura contenente le informazioni utili nei vari passaggi del programma.
+
+\****************************************************************************************/
 struct DataSet
 {
 	unsigned char *cont, *dz;
@@ -18,7 +22,7 @@ struct DataSet
 	long int numPoints;
 	float Xg, Yg;				//Coordinate baricentro
 	float xminInput, xmaxInput, yminInput, ymaxInput;	//Estremi intera regione in 
-	//input in coordinate cartografiche
+															//input in coordinate cartografiche
 	float zmin, zmax;			//Massime e minime quote
 	// float Imax,Imin;
 	float pelsX/*,pelsY*/;			//Passo della griglia (dimensione cella)
@@ -32,6 +36,14 @@ struct DataSet
 	float *z;
 };
 
+/****************************************************************************************\
+	Struttura che racchiude le informazioni relative ai punti raw.
+	Contiene informazioni riguardo le cordinate spaziali nel sistema di riferimento 
+	dei punti raw, con la relativa quota, ed una variabil e pair di due interi che 
+	rappresentano i corrispondenti indici di riga e colonna all'interno del grigliato.
+	Inoltre vi è un'intero id contenente il numero identificativo di ogni punto.
+
+\****************************************************************************************/
 struct Item
 {
 	float nord, est, quota;					/* Variabili che conterranno le coordinate spaziali (RAW). */
@@ -47,3 +59,4 @@ int selezionaCaso(FILE *InFile);
 char * validateCFGDataRAW();
 void leggiDatiInput(const char *filename, DataSet *data1, std::list<Item>&points);
 int VerificaPunto(char *str,FILE *InFile);
+void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, float **graR, float **graC);

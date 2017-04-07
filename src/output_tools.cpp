@@ -243,3 +243,51 @@ void writeBpw(char *filename, DataSet *data1)
 
 	fclose(out);
 };
+
+/*----------------------------------------------------------------------------------------*\
+Nome Routine:
+export
+Salva una porzione di dati in formato ASCII ENz
+
+\*-----------------------------------------------------------------------------------------*/
+void export(DataSet *data1)
+{
+	//int i, j, Wlarg, Walt;
+	FILE *exp;
+	//char *nomeFileOut = NULL;
+	std::string file_out_name;
+	int nopunti, k, col, rows;
+	float x, y;
+	errno_t err;
+
+	//JOHN_COOR
+	//Wlarg = (Data->LoRightC - Data->UpLeftC)/Data->pelsX;
+	//Walt = (Data->LoRightR - Data->UpLeftR)/Data->pelsY;
+	col = data1->widthGrid;
+	rows = data1->heightGrid;
+
+	nopunti = data1->heightGrid * data1->widthGrid;
+
+	file_out_name = makeExtension(laserRegioniConfig.projectName, ".xyz");
+	const char *file_out_name_char = file_out_name.c_str();
+	err = fopen_s(&exp, file_out_name_char, "w");
+	if (err != 0)
+		errore(FILE_OPENWRITE_ERROR, (char*)file_out_name_char , "Export", TRUE);
+
+	for (int i = 0; i < rows; ++i)
+	{
+		for (int j = 0; j < col; ++j )
+		{
+
+			x = data1->LoLeftX + j*data1->pelsX;
+			/* Versione originale è pelsY ma nella mia uso solo una variabile.
+				Anche in quella originale, in realtà, venivano assegnati con gli stessi valori. */
+			y = (data1->LoLeftY + data1->heightGrid* data1->pelsX) - i*data1->pelsX;
+			k = i* col + j;
+			if (data1-> z[k] != QUOTA_BUCHI)
+				fprintf(exp, " %9.2f,%10.2f,%9.2f\n", x, y, data1->z[k]);
+		}
+	}
+
+	fclose(exp);
+}

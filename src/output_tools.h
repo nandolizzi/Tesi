@@ -9,6 +9,7 @@
 #include "const.h"
 #include "parameters.h"
 #include "defs.h"
+//#include "gradient_tools.h"
 
 #ifndef DEF_HEADER
 #define DEF_HEADER
@@ -29,4 +30,5 @@ void InvertiRaw2Bmp_h(HEADER *h, FILE *bmp);
 void InvertiRaw2Bmp(unsigned char *bitmap, long int Height, long int Width, long int offset, FILE *bmp);
 void writePalette(FILE * out_file, FILE * palette);
 void writeBpw(char *filename, DataSet *data1);
+void export(DataSet *data1);
 

@@ -42,6 +42,9 @@
     <ClCompile Include="src\output_tools.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
+    <ClCompile Include="src\gradient_tools.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\input_validate.h">
@@ -72,6 +75,9 @@
       <Filter>File di origine</Filter>
     </ClInclude>
     <ClInclude Include="src\output_tools.h">
+      <Filter>File di origine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gradient_tools.h">
       <Filter>File di origine</Filter>
     </ClInclude>
   </ItemGroup>

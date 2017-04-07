@@ -15,6 +15,7 @@
     <ClCompile Include="src\error.cpp" />
     <ClCompile Include="src\get_line.cpp" />
     <ClCompile Include="src\input_validate.cpp" />
+    <ClCompile Include="src\gradient_tools.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\output_tools.cpp" />
     <ClCompile Include="src\parameters.cpp" />
@@ -27,6 +28,7 @@
     <ClInclude Include="src\error.h" />
     <ClInclude Include="src\get_line.h" />
     <ClInclude Include="src\input_validate.h" />
+    <ClInclude Include="src\gradient_tools.h" />
     <ClInclude Include="src\output_tools.h" />
     <ClInclude Include="src\parameters.h" />
     <ClInclude Include="src\defs.h" />

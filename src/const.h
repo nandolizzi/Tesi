@@ -7,7 +7,7 @@
 #define NUM_CLASSI_INIZ 10000  //rapportare alla dimensione immagine
 #define NUM_CLASSI_INC 1000
 
-#define	PIGRECO        3.141592654
+#define	PIGRECO        3.14159265358979323846
 #define	NONE 0
 #define	FALSE 0                //$ 204
 #define	TRUE 1                 //$ 204
@@ -334,3 +334,7 @@ default per i parametri
 #define ESPTUTTO_EXT1            "_Classi.txt"
 #define ESPTUTTO_EXT            "_CLASSI.txt"
 #define ESPFILTER_EXT           "_FILT.txt"
+
+
+#define SQR(X)	((X)*(X))
+#define MOLTSQM   2

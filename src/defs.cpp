@@ -1,14 +1,15 @@
 #include <iostream>
 #include <string>
-#include <Core>
+//#include <Core>
 #include <vector>
 
 #include "defs.h"
 #include "const.h"
 #include "tools.h"
 #include "output_tools.h"
+#include "gradient_tools.h"
 
-using namespace Eigen;
+//using namespace Eigen;
 using namespace std;
 
 #define tempMin 1000000000
@@ -165,8 +166,9 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 
 	rewind(inputFile);
 
-	std::cout << "Width (min - max): " << data1->xminInput << "-" << data1->xmaxInput << endl;
-	std::cout << "Height (min - max): " << data1->yminInput << "-" << data1->ymaxInput << endl;
+
+	std::cout << "Width (min - max): " << data1->LoLeftX << "-" << data1->UpRightX << endl;
+	std::cout << "Height (min - max): " << data1->LoLeftY << "-" << data1->UpRightY << endl;
 	std::cout << "Matrice: " << data1->heightGrid << "x" << data1->widthGrid << "=" << data1->widthGrid*data1->heightGrid << endl;
 	std::cout << "Grigliatura: " << data1->pelsX << endl;
 
@@ -218,8 +220,8 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 	data1->Xg = (2 * data1->LoLeftX + data1->widthGrid * data1->pelsX) / 2;
 	data1->Yg = (2 * data1->LoLeftY + data1->heightGrid * data1->pelsX) / 2;
 
-	//if(laserRegioniConfig.tipoOutputASCII == USCITA_ASCII_EN) ;
-	//	esporta(Data1);  //$ economia di variabili (dim)?
+	if(laserRegioniConfig.tipoOutputASCII == USCITA_ASCII_EN) ;
+		export(data1);  //$ economia di variabili (dim)?
 
 }
 
@@ -253,4 +255,131 @@ int VerificaPunto(char *str, FILE *InFile)
 
 
 	return numero_sottostr++;
+};
+
+/*------------------------------------------------------------------------------------*\
+Nome routine:
+SegmentaInFalde1
+
+Calcolo dell'intensità del gradiente e dell'orientamento con fusione di
+2 partizioni shiftate di mezza ampiezza (se partizioni a 45° -> shift=22,5°:
+l'output è la bitmap contenente la segmentazione basata sull'orientamento
+del gradiente per TUTTA l'area
+
+
+(aggiunta recente ancora da convalidare)
+Calcolo delle discontinuità sulla base dell'orientamento del gradiente di punti con
+intensità del gradiente elevate (laserRegioniConfig.sogliaGradContornoColmi)
+l'output è:
+- la bitmap contenete la segmentazione basata sull'orientamento del gradiente per punti
+avente intensità del gradiente elevata
+- file dxf delle linee estratte
+
+Parametri:
+
+<INPUT> DATA *Data	-	 Informazioni di elaborazione del progetto
+<OUTPUT> unsigned char ** cnt	-	Immagine dell'orientamento dei gradienti
+
+ritorna:
+
+- la bitmap cnt che contiene la segmentazione secondo l'orientamento del gradiente
+
+\*------------------------------------------------------------------------------------*/
+void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, float **graR, float **graC)
+{
+	const char * FName = "SegmentaInFalde1";
+	/* Il numero degli elementi del vettore dipende dalla dimensione della matrice
+		della quale voglio il kernel. (es. la prof usa 5 vome valori di riga e colonna 
+		attraverso i quali fare i kernel quindi basterebbero vettori da 25). Versione iniziale da 81.*/
+	float Hr[25], Hc[25], a[24], b[24];
+	double shift;
+	int i;
+	int partitions;
+	
+	unsigned char *gra = new unsigned char[data1->widthGrid*data1->heightGrid];
+	unsigned char *map1 = new unsigned char[data1->widthGrid*data1->heightGrid];
+	unsigned char *map2 = new unsigned char[data1->widthGrid*data1->heightGrid];
+	unsigned char *mapL = new unsigned char[data1->widthGrid*data1->heightGrid];
+	int *cnt1 = new int[data1->widthGrid*data1->heightGrid];
+	int *cnt2 = new int[data1->widthGrid*data1->heightGrid];
+
+	const char * file_out_name_char = NULL;
+	const char * file_palette_name_char = NULL;
+
+	FILE *sgn;
+	int lineeIMG;
+	PLine **cls;
+	int tot_grid_points;
+
+
+	tot_grid_points = data1->widthGrid*data1->heightGrid;
+
+	/*************CALCOLO GRADIENTE **************************/
+	build_kernel(Hr, Hc, 5);
+	
+	/* funzioni per applicare il filtro del kernel. La funzione, se andata a buon fine, restituisce un uno. */
+	if (!kernelf(data1->z, *graR, Hr, 1, data1->widthGrid, data1->heightGrid, 5, 5))
+		errore(ROUTINE_GENERIC_ERROR, "kernelf in R", FName, FALSE);
+	if (!kernelf(data1->z, *graC, Hc, 1, data1->widthGrid, data1->heightGrid, 5, 5))
+		errore(ROUTINE_GENERIC_ERROR, "kernelf in C", FName, FALSE);
+
+	Gradiente(*graR, *graC, gra, data1->widthGrid, data1->heightGrid, data1->pelsX, data1->LoLeftX, data1->LoLeftY);
+
+	if (laserRegioniConfig.tipoUscita >= LEVEL_3)
+	{
+		std::string file_out_name = makeExtension(laserRegioniConfig.projectName, SEGMINGRAD_EXT);
+		file_out_name_char = file_out_name.c_str();
+		if (fopen_s(&sgn, file_out_name_char, "wb") != NULL)
+			errore(FILE_OPENWRITE_ERROR, (char*) file_out_name_char, FName, TRUE);
+
+		if (laserRegioniConfig.paletteFileName != NULL)
+		{
+			std::string file_palette_name = makeExtension(laserRegioniConfig.paletteFileName, SEGMINFALDE_ACT);
+			file_palette_name_char = file_palette_name.c_str();
+		}
+		HeaderWrPalette(sgn, data1->widthGrid, data1->heightGrid,(char*)file_palette_name_char);
+		InvertiRaw2Bmp(gra, data1->heightGrid, data1->widthGrid, 1078, sgn);
+		fclose(sgn);
+	}
+	delete gra;
+
+	/*********CALCOLO ORIENTAMENTO DEL GRADIENTE*****************/
+	partitions = build_partitions(a, b);
+
+	if (!Teta(*graR, *graC, map1, a, laserRegioniConfig.sogliaGradOrientazione, 3, 3, data1->widthGrid, data1->heightGrid, partitions, 255))
+		errore(ROUTINE_GENERIC_ERROR, "CalcolaGraTeta", FName, FALSE);
+	if (!Teta(*graR, *graC, map2, b, laserRegioniConfig.sogliaGradOrientazione, 3, 3, data1->widthGrid, data1->heightGrid, partitions, 255))
+		errore(ROUTINE_GENERIC_ERROR, "CalcolaGraTeta", FName, FALSE);
+
+	conta(map1, cnt1, data1->widthGrid, data1->heightGrid, 255);
+	conta(map2, cnt2, data1->widthGrid, data1->heightGrid, 255);
+
+	//Fusione dei due partizionamenti shiftati: risultato in cnt!
+	Fusione(cnt1, cnt2, map1, map2, *cnt, data1->widthGrid, data1->heightGrid);
+
+	//stampa dei risultati della segmentazione caricati sulla bitmap (gloable) map - cnt  nel main
+
+	if (laserRegioniConfig.tipoUscita >= LEVEL_1)
+	{
+		std::string file_out_name = makeExtension(laserRegioniConfig.projectName, SEGMINFALDE_EXT);
+		const char *file_out_name_char = file_out_name.c_str();
+
+		if (fopen_s(&sgn, file_out_name_char, "wb") != NULL)
+			errore(FILE_OPENWRITE_ERROR, (char*)file_out_name_char, FName, TRUE);
+
+		if (laserRegioniConfig.paletteFileName != NULL)
+		{
+			std::string file_palette_name = makeExtension(laserRegioniConfig.paletteFileName, SEGMINFALDE_ACT);
+			file_palette_name_char = file_palette_name.c_str();
+		}
+		HeaderWrPalette(sgn, data1->widthGrid , data1-> heightGrid, (char*)file_palette_name_char);
+		InvertiRaw2Bmp(*cnt, data1->widthGrid, data1->heightGrid, 1078, sgn);
+		fclose(sgn);
+	}
+
+	delete map1;
+	delete map2;
+	delete mapL;
+	delete cnt1;
+	delete cnt2;
 };
