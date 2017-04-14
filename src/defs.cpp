@@ -36,7 +36,7 @@ int Config2Data(DataSet *data1)
 	data1->UpRightX = data1->LoLeftX + (double)(data1->pelsX * data1->widthGrid);
 	data1->UpRightY = data1->LoLeftY + (double)(data1->pelsX * data1->heightGrid);
 
-	data1->z = new float[data1->widthGrid*data1->heightGrid];
+	data1->z = new real_[data1->widthGrid*data1->heightGrid];
 
 	return SUCCESS;
 
@@ -183,8 +183,6 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 	for (int i = 0; i < dataset_vector.size(); i++)
 		dataset_vector[i].dz;
 
-
-
 	printf("\n\t\tPunti in input: %ld \n", tot_nodes);
 	printf("\t\tPunti Griglia: %ld \n", tot_grid_points);
 	printf("\nInizio lettura dati RAW...%s\n", laserRegioniConfig.inputDataFileName);
@@ -285,13 +283,13 @@ ritorna:
 - la bitmap cnt che contiene la segmentazione secondo l'orientamento del gradiente
 
 \*------------------------------------------------------------------------------------*/
-void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, float **graR, float **graC)
+void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, real_ **graR, real_ **graC)
 {
 	const char * FName = "SegmentaInFalde1";
 	/* Il numero degli elementi del vettore dipende dalla dimensione della matrice
 		della quale voglio il kernel. (es. la prof usa 5 vome valori di riga e colonna 
 		attraverso i quali fare i kernel quindi basterebbero vettori da 25). Versione iniziale da 81.*/
-	float Hr[25], Hc[25], a[24], b[24];
+	real_ Hr[25], Hc[25], a[24], b[24];
 	double shift;
 	int i;
 	int partitions;
@@ -300,8 +298,8 @@ void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, float **graR, float *
 	unsigned char *map1 = new unsigned char[data1->widthGrid*data1->heightGrid];
 	unsigned char *map2 = new unsigned char[data1->widthGrid*data1->heightGrid];
 	unsigned char *mapL = new unsigned char[data1->widthGrid*data1->heightGrid];
-	int *cnt1 = new int[data1->widthGrid*data1->heightGrid];
-	int *cnt2 = new int[data1->widthGrid*data1->heightGrid];
+	long int *cnt1 = new long int[data1->widthGrid*data1->heightGrid];
+	long int *cnt2 = new long int[data1->widthGrid*data1->heightGrid];
 
 	const char * file_out_name_char = NULL;
 	const char * file_palette_name_char = NULL;
@@ -309,18 +307,18 @@ void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, float **graR, float *
 	FILE *sgn;
 	int lineeIMG;
 	PLine **cls;
-	int tot_grid_points;
+	long int tot_grid_points;
 
 
 	tot_grid_points = data1->widthGrid*data1->heightGrid;
 
 	/*************CALCOLO GRADIENTE **************************/
-	build_kernel(Hr, Hc, 5);
+	build_kernel(Hr, Hc, 3);
 	
 	/* funzioni per applicare il filtro del kernel. La funzione, se andata a buon fine, restituisce un uno. */
-	if (!kernelf(data1->z, *graR, Hr, 1, data1->widthGrid, data1->heightGrid, 5, 5))
+	if (!kernelf(data1->z, *graR, Hr, 1, data1->widthGrid, data1->heightGrid, 3, 3))
 		errore(ROUTINE_GENERIC_ERROR, "kernelf in R", FName, FALSE);
-	if (!kernelf(data1->z, *graC, Hc, 1, data1->widthGrid, data1->heightGrid, 5, 5))
+	if (!kernelf(data1->z, *graC, Hc, 1, data1->widthGrid, data1->heightGrid, 3, 3))
 		errore(ROUTINE_GENERIC_ERROR, "kernelf in C", FName, FALSE);
 
 	Gradiente(*graR, *graC, gra, data1->widthGrid, data1->heightGrid, data1->pelsX, data1->LoLeftX, data1->LoLeftY);
@@ -351,8 +349,8 @@ void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, float **graR, float *
 	if (!Teta(*graR, *graC, map2, b, laserRegioniConfig.sogliaGradOrientazione, 3, 3, data1->widthGrid, data1->heightGrid, partitions, 255))
 		errore(ROUTINE_GENERIC_ERROR, "CalcolaGraTeta", FName, FALSE);
 
-	conta(map1, cnt1, data1->widthGrid, data1->heightGrid, 255);
-	conta(map2, cnt2, data1->widthGrid, data1->heightGrid, 255);
+	conta(map1, cnt1, data1->widthGrid, data1->heightGrid, 255,1);
+	conta(map2, cnt2, data1->widthGrid, data1->heightGrid, 255,2);
 
 	//Fusione dei due partizionamenti shiftati: risultato in cnt!
 	Fusione(cnt1, cnt2, map1, map2, *cnt, data1->widthGrid, data1->heightGrid);
@@ -373,7 +371,7 @@ void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, float **graR, float *
 			file_palette_name_char = file_palette_name.c_str();
 		}
 		HeaderWrPalette(sgn, data1->widthGrid , data1-> heightGrid, (char*)file_palette_name_char);
-		InvertiRaw2Bmp(*cnt, data1->widthGrid, data1->heightGrid, 1078, sgn);
+		InvertiRaw2Bmp(*cnt, data1->heightGrid, data1->widthGrid, 1078, sgn);
 		fclose(sgn);
 	}
 

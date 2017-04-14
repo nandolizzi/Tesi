@@ -3,7 +3,7 @@
 
 extern Configurator laserRegioniConfig;
 
-void build_kernel(float *Hr, float *Hc, int dim)
+void build_kernel(real_ *Hr, real_ *Hc, int dim)
 {
 
 	switch (dim)
@@ -108,16 +108,16 @@ kernelf
 Filtro su dati float
 
 Parametri:
-<INPUT> float * Z	-	Valori su cui calcolare il kernelf.
-<OUTPUT> float * kern	-	Risultato.
-<INPUT> float * a	-	Matrice dei pesi per il calcolo.
+<INPUT> real_ * Z	-	Valori su cui calcolare il kernelf.
+<OUTPUT> real_ * kern	-	Risultato.
+<INPUT> real_ * a	-	Matrice dei pesi per il calcolo.
 <INPUT> int Lx, Ly - Interi rappresentanti le dimensioni del filtro.
 
 \*-------------------------------------------------------------------*/
-bool kernelf(float *Z, float *kern, float *filter_something, float dvd,	int Width, int Height, int Lx, int Ly)
+bool kernelf(real_ *Z, real_ *kern, real_ *filter_something, real_ dvd,	int Width, int Height, int Lx, int Ly)
 {
 	int i, j, k, l;
-	float greyvalue;
+	real_ greyvalue;
 	/* Shifto a destra la dimensione del filtro (la divido per 2). copio nella matrice dfel kernel i valori di data-> z
 		da 0 alla dimensione del kernel shiftata a dx di una posizione, quindi applico il filtraggio dalla suddetta posizione
 		fino alla fine delle righe e delle colonne meno le dimensioni del filtro shiftate e infine ricomincio a copiare
@@ -174,7 +174,7 @@ Di servizio per il calcolo del gradiente
 Parametri:
 
 \*------------------------------------------------------------------------------------*/
-int Gradiente(float *grx, float *gry, unsigned char *gra, int width, int height, float passo, float LoLeftX, float LoLeftY)
+int Gradiente(real_ *grx, real_ *gry, unsigned char *gra, int width, int height, real_ passo, real_ LoLeftX, real_ LoLeftY)
 {
 	double Gx, Gy;		//,teta;
 	double intensity;	//$C  corretto
@@ -185,7 +185,7 @@ int Gradiente(float *grx, float *gry, unsigned char *gra, int width, int height,
 	int punti;
 	const char * FName = "Gradiente";
 	const char * file_palette_name_char = NULL;
-	float min, max;
+	real_ min, max;
 	unsigned char *pen = new unsigned char[width*height];
 
 	double VAR_Z;
@@ -217,7 +217,7 @@ int Gradiente(float *grx, float *gry, unsigned char *gra, int width, int height,
 
 			*(gra + m + j) = intensity > 255 ? 255 : (unsigned char)intensity;
 			pendenza = intensity / (double)(2 * passo);  //ATTENZIONE: messo a 2 (era 8)...già divisi i gradienti per 4 (riga 207)
-			soglia = (float)(pendenza*passo + MOLTSQM*sqrt((double)(PERCPENDENZA*pendenza*PERCPENDENZA*pendenza) + VAR_Z));
+			soglia = (real_)(pendenza*passo + MOLTSQM*sqrt((double)(PERCPENDENZA*pendenza*PERCPENDENZA*pendenza) + VAR_Z));
 			if (soglia < max)
 				*(pen + m + j) = (int)((soglia - min) / delta);
 			else  *(pen + m + j) = 255;
@@ -249,11 +249,11 @@ int Gradiente(float *grx, float *gry, unsigned char *gra, int width, int height,
 	return 1;
 };
 
-int build_partitions(float *a, float *b)
+int build_partitions(real_ *a, real_ *b)
 {
 	int partitions;
 	int i;
-	float shift;
+	real_ shift;
 
 	partitions = laserRegioniConfig.numPartizioni;
 
@@ -263,17 +263,17 @@ int build_partitions(float *a, float *b)
 		a[0] = 0.0;
 		for (i = 1; i<partitions; i++) a[i] = a[i - 1] + 45;
 		//calcolo dello shift: (360 / 8) / 2 = 22,5°
-		shift = (float)(360.0 / (float)partitions);
+		shift = (real_)(360.0 / (real_)partitions);
 		//le partizioni di "b" saranno: 22,5-67,5 ; 67,5 - 112,5 ; ecc.
-		for (i = 0; i<partitions; i++) b[i] = a[i] + (float)(shift / 2);
+		for (i = 0; i<partitions; i++) b[i] = a[i] + (real_)(shift / 2);
 	}
 	else if (partitions == 12)
 	{
 		//30 gradi
 		a[0] = 0.0;
 		for (i = 1; i<partitions; i++) a[i] = a[i - 1] + 30;
-		shift = (float)(360.0 / (float)partitions);
-		for (i = 0; i<partitions; i++) b[i] = a[i] + (float)(shift / 2);
+		shift = (real_)(360.0 / (real_)partitions);
+		for (i = 0; i<partitions; i++) b[i] = a[i] + (real_)(shift / 2);
 	}
 	return partitions;
 };
@@ -285,11 +285,11 @@ Teta
 Di servizio per il calcolo dell'orientamento
 
 Parametri:
-<INPUT> float * grx	-	Gradiente lungo l'asse x
-<INPUT> float * gry	-	Gradiente lungo l'asse y
+<INPUT> real_ * grx	-	Gradiente lungo l'asse x
+<INPUT> real_ * gry	-	Gradiente lungo l'asse y
 <OUTPUT> unsigned char * map1	-	Output elaborazione: mappa delle classi
-<INPUT>	float * a	-	Partizionamenti in base all'orientamento gradiente
-<INPUT> float sogliaGradiente	-	Soglia sull'intensità del gradiente
+<INPUT>	real_ * a	-	Partizionamenti in base all'orientamento gradiente
+<INPUT> real_ sogliaGradiente	-	Soglia sull'intensità del gradiente
 <INPUT> int Lx		-
 <INPUT> int Ly		-
 <INPUT> int width	-	Larghezza grigliato
@@ -298,7 +298,7 @@ Parametri:
 <INPUT> int MaxCol	-	Colore massimo
 
 \*------------------------------------------------------------------------------------*/
-bool Teta(float *grx, float *gry, unsigned char *map1, float *a, float sogliaGradiente, int Lx, int Ly, int width, int height, int partizioni, int MaxCol)
+bool Teta(real_ *grx, real_ *gry, unsigned char *map1, real_ *a, real_ sogliaGradiente, int Lx, int Ly, int width, int height, int partizioni, int MaxCol)
 {
 	double Gx, Gy, teta;
 	double intensity;    //$C  corretto
@@ -325,7 +325,7 @@ bool Teta(float *grx, float *gry, unsigned char *map1, float *a, float sogliaGra
 			intensity = fabs(Gx) + fabs(Gy);
 
 			if (intensity <= sogliaGradiente)
-				teta = 1000.0;   //$C messo soglia come float : E' DATA COME FLOAT
+				teta = 1000.0;   //$C messo soglia come real_ : E' DATA COME real_
 			else
 				teta = ((atan2(Gy, Gx))*180.0) / PIGRECO;
 			if (teta < 0)
@@ -360,7 +360,7 @@ Di servizio per il calcolo dell'orientamento
 Parametri:
 
 \*------------------------------------------------------------------------------------*/
-unsigned char Analisi_teta(double teta, float *a, int partizione, int MaxCol)
+unsigned char Analisi_teta(double teta, real_ *a, int partizione, int MaxCol)
 {
 	int col, i, delta;
 
@@ -404,13 +404,14 @@ Di servizio per il calcolo dell'orientamento
 Parametri:
 
 \*------------------------------------------------------------------------------------*/
-int conta(unsigned char *map1, int * cnt, int larg, int alt, int MaxCol)
+int conta(unsigned char *map1, long int * cnt, int larg, int alt, int MaxCol, int caso)
 {
+	
 	const char * FName = "conta";
 	long int pos, posatt, posliv;
 	int m, n, i, j, k, l;
 	
-	int *coda = new int[larg*alt];
+	long int *coda = new long int[larg*alt];
 	unsigned char *label = new unsigned char[larg*alt];
 
 	for (i = 0; i<alt; i++)
@@ -450,12 +451,15 @@ int conta(unsigned char *map1, int * cnt, int larg, int alt, int MaxCol)
 
 				} while ((posliv - pos) > 0);
 
-				for (int d = 0; d<pos; d++)
+				
+				for (long int d = 0; d<pos; d++)
+				{
 					*(cnt + coda[d]) = pos;
+				//	std::cout << "cnt[" << d << "]: " << pos << std::endl;
+				}
 			}
 		}
 	}
-
 	delete coda;
 	delete label;
 
@@ -481,8 +485,9 @@ Parametri:
 <OUTPUT> unsigned char * map	-	Matrice risultante delle classi
 
 \*------------------------------------------------------------------------------------*/
-int Fusione(int *cnt1, int *cnt2, unsigned char *map1, unsigned char *map2, unsigned char *map, int larg, int alt)
+int Fusione(long int *cnt1, long int *cnt2, unsigned char *map1, unsigned char *map2, unsigned char *map, int larg, int alt)
 {
+	//FILE *fd = fopen("prova_fusione.txt", "w");
 	int i, j, N1, N2;
 
 	for (i = 0; i<alt; i++)
@@ -496,8 +501,9 @@ int Fusione(int *cnt1, int *cnt2, unsigned char *map1, unsigned char *map2, unsi
 			//Se la prima partizione > seconda partizione -> valore classe da map1
 			//altrimenti da map2
 			(*(map + i*larg + j) = (N1>N2) ? *(map1 + i*larg + j) : *(map2 + i*larg + j));
-
+			//fprintf(fd, "cnt1[%d,%d]: %d\tmap1[%d,%d]: %d\tcnt2[%d,%d]: %u\tmap2[%d,%d]: %u\tmap[%d,%d]: %u\n", i, j, cnt1[i*larg + j], i, j, map1[i*larg + j], i, j, cnt2[i*larg + j], i, j, map2[i*larg + j], i, j, map[i*larg + j]);
 		}
 	}
+	//fclose(fd);
 	return 0;
 }

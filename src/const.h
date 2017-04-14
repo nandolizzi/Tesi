@@ -1,5 +1,7 @@
 #pragma once
 
+typedef long double real_;
+
 /*---------------------------------------------*\
 	FIle const.h della prof.ssa
 \*---------------------------------------------*/
@@ -24,7 +26,8 @@
 
 #define TIPORICERCA_DTM		0
 #define TIPORICERCA_EDIFICI	1
-#define TIPORICERCA_MEDIANO		2
+#define TIPORICERCA_MEDIANO	2
+#define TIPORICERCA_ALT_TERRENO	3
 
 #define TIPO_LF_1SOLO		1
 #define TIPO_LF_LASTFIRST	2
@@ -77,6 +80,7 @@
 #define SOGLIA_UEB    1          //m
 #define SOGLIA_INDUSTRIALE  3    //m 
 #define DISLIVELLO_MAT_SPARSA    3 //cm 250  differenza fra punti raw nella stessa cella: se > di prende il punto + basso
+#define ALT_DA_TERRENO	3
 #define PERCENTUALEFALDE       0.3
 #define SOGLIA_GRAD_CONTORNO    7
 #define SOGLIA_GRAD_ORIENTAMENTO  2

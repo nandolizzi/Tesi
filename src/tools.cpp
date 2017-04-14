@@ -73,20 +73,19 @@ int  Leggi_SinglePulse_xyz(std::list<Item>&points, DataSet *data, int tot_ele, F
 				puntiButtati++;
 		}
 	}
-
 	std::cout << "\n\tPunti raw totali: " << punti << "\n\tPunti buttati : " << puntiButtati << std::endl;
 	//writeList(points, "prova_XY.txt");
 
 	data->numPoints = punti_selezionati;
 	if (laserRegioniConfig.showAdditionalInfos)
 	{
-		data->xminInput = (float)tempXminTot;
-		data->xmaxInput = (float)tempXmaxTot;
-		data->yminInput = (float)tempYminTot;
-		data->ymaxInput = (float)tempYmaxTot;
+		data->xminInput = (real_)tempXminTot;
+		data->xmaxInput = (real_)tempXmaxTot;
+		data->yminInput = (real_)tempYminTot;
+		data->ymaxInput = (real_)tempYmaxTot;
 	}
-	data->zmin = (float)tempZmin;
-	data->zmax = (float)tempZmax;
+	data->zmin = (real_)tempZmin;
+	data->zmax = (real_)tempZmax;
 
 	return punti;
 };
@@ -137,7 +136,7 @@ void writeList(std::list<Item>&points, const char *filename)
 	//return true;
 }
 
-void setItem(Item &n_it, float n, float e, float q, int identity, const std::pair<int, int>& c)
+void setItem(Item &n_it, real_ n, real_ e, real_ q, int identity, const std::pair<int, int>& c)
 {
 	n_it.nord = n;
 	n_it.est = e;
@@ -149,24 +148,30 @@ void setItem(Item &n_it, float n, float e, float q, int identity, const std::pai
 void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int col)
 {
 	const char			*FName = "buildMatriceSparsa";
-	int emptyCells = 0, m;
+	long int emptyCells = 0, m;
 	unsigned char *density = new unsigned char[data1->widthGrid*data1->heightGrid];
-	float	delta;
+	for (size_t i = 0; i < (data1->widthGrid*data1->heightGrid); i++)
+	{
+		density[i] = 0;
+	}
+	real_	delta;
 	int MaxD = 0;			//Densità massima
 	int counter = 0;
 	FILE *out_file;
 	const char* file_palette_name_char = NULL;
 
+	std::cout << "nome file palette: " << laserRegioniConfig.paletteFileName << std::endl;
+
 	points.sort(compare_index_then_value);
 	//writeList(points, "prova_sort.txt");
 
 	/* Dichiaro una mappa con un pair (di coordinate), come chiave ed il valore della quota. */
-	std::map<std::pair<int, int>, std::vector<float>> item_map;
+	std::map<std::pair<int, int>, std::vector<real_>> item_map;
 	/* Immetto la lista nella mappa. */
 	item_map = list2map(points);
 	//write_map(item_map, "prova_map.txt");
 
-	FILE *fd = fopen("prova_output.txt", "w");
+	//FILE *fd = fopen("prova_output.txt", "w");
 	int tot_celle = rows*col;
 
 	/*for (int i = 0; i < 5; ++i)   //scorre le righe
@@ -183,7 +188,77 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 	}
 	}
 	}*/
+	std::cout << "\ndislivelloMatriceSparsa: " << laserRegioniConfig.dislivelloMatriceSparsa << std::endl;
+	std::cout << "altezza da terreno: " << laserRegioniConfig.altezzaDaTerreno << std::endl;
+	if (laserRegioniConfig.tipoRicerca == TIPORICERCA_EDIFICI)
+	{
+		height_search(data1, item_map, rows, col, MaxD, density);
+	}
+	else if (laserRegioniConfig.tipoRicerca == TIPORICERCA_DTM)
+	{
+		terrain_search(data1, item_map, rows, col, MaxD, density);
+	}
+	else if (laserRegioniConfig.tipoRicerca == TIPORICERCA_ALT_TERRENO)
+	{
+		/*unsigned char *density_temp = new unsigned char[data1->widthGrid*data1->heightGrid];
+		for (size_t i = 0; i < (data1->widthGrid*data1->heightGrid); i++)
+		{
+			density_temp[i]= 0;
+		}*/
+		
+		real_ *z_temp = new real_[tot_celle];
 
+		terrain_search(data1, item_map, rows, col, MaxD, density);
+		for (size_t i = 0; i < (data1->widthGrid*data1->heightGrid); i++)
+		{
+			z_temp[i] = data1->z[i];
+		}
+
+		height_search(data1, item_map, rows, col, MaxD, density);
+		
+		for (size_t i = 0; i < (data1->widthGrid*data1->heightGrid); ++i)
+		{
+			data1->z[i] = data1->z[i] - z_temp[i];
+			if (data1->z[i] < laserRegioniConfig.altezzaDaTerreno)
+			{
+				data1->z[i] = 0;
+			}
+		}
+		
+		std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << std::endl;
+		delete z_temp;
+	}
+	std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << std::endl;
+	//fprintf(fd, "celle totali: %d\ncelle vuote: %d\ncelle piene: %d\n", tot_celle, emptyCells, (tot_celle - emptyCells));
+	
+	if (laserRegioniConfig.tipoUscita >= LEVEL_3)
+	{
+		/*Creo il nome del file di output*/
+		std::string file_out_name = makeExtension(laserRegioniConfig.projectName, DENSITAPNT_EXT);
+		const char *file_out_name_char = file_out_name.c_str();
+
+		if (fopen_s(&out_file, file_out_name_char, "wb") != NULL)
+			errore(FILE_OPENWRITE_ERROR, (char*)file_out_name_char, FName, TRUE);
+
+		if (laserRegioniConfig.paletteFileName != NULL)
+		{
+			std::string file_palette_name = makeExtension(laserRegioniConfig.paletteFileName, DENSITAPNT_ACT);
+			file_palette_name_char = file_palette_name.c_str();
+		}
+		HeaderWrPalette(out_file, col, rows, (char*)file_palette_name_char);
+		InvertiRaw2Bmp(density, rows, col, 1078, out_file);
+		fclose(out_file);
+	}
+
+	delete density;
+	//fclose(fd);
+	return;
+};
+
+/* Funzione per cercare le altezze totali. */
+void height_search(DataSet *data1, std::map<std::pair<int, int>, std::vector<real_>> &item_map, int rows, int col, int& max_density, unsigned char *density)
+{
+	long int empty_cells = 0, m;
 	for (int i = 0; i < rows; ++i)   //scorre le righe
 	{
 		m = i *col;
@@ -192,7 +267,7 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 			/* Se non viene trovato alcun elemento nella cella della mappa allora la si setta nulla. */
 			if (item_map.count(std::make_pair(i, j)) < 1/*item_map.find(std::make_pair(i, j)) == item_map.end()*/)
 			{
-				emptyCells++;
+				empty_cells++;
 				data1->z[m + j] = QUOTA_BUCHI;
 			}
 			else
@@ -208,10 +283,9 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 				else
 				{
 					/* Altrimenti si valuta la differenza tra i due elementi con valore maggiore e valore minore. */
-					delta = item_map[std::make_pair(i, j)].back() - item_map[std::make_pair(i, j)].front();
-					/* Dato che il programma non legge un float in ingresso lo scrivo nel file config * 100,
-					quindi sotto lo divido per 100 e lo casto. */
-					float dislivello = (float)(laserRegioniConfig.dislivelloMatriceSparsa) / 100;
+					real_ delta = item_map[std::make_pair(i, j)].back() - item_map[std::make_pair(i, j)].front();
+					/* confronto il valore delta con il dislivello matrice sparsa settato con il file config*/
+					real_ dislivello = (real_)laserRegioniConfig.dislivelloMatriceSparsa;
 					/* Valuto il valore di delta rispetto al dislivello inserito nel file config. */
 					if (delta > dislivello)
 					{
@@ -234,38 +308,77 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 					}
 				}
 				/* Per adesso ho aggiunto questo pezzo ma devo chiedere alla professoressa. */
-				MaxD = vec_size > MaxD ? vec_size : MaxD;
+				max_density = vec_size > max_density ? vec_size : max_density;
 				if (vec_size > 255) vec_size = 255;
 				*(density + m + j) = (unsigned char)vec_size;
 			}
 		}
 	}
-	std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << std::endl;
-	fprintf(fd, "celle totali: %d\ncelle vuote: %d\ncelle piene: %d\n", tot_celle, emptyCells, (tot_celle - emptyCells));
-	
-	if (laserRegioniConfig.tipoUscita >= LEVEL_3)
-	{
-		/*Creo il nome del file di output*/
-		std::string file_out_name = makeExtension(laserRegioniConfig.projectName, DENSITAPNT_EXT);
-		const char *file_out_name_char = file_out_name.c_str();
-
-		if (fopen_s(&out_file, file_out_name_char, "wb") != NULL)
-			errore(FILE_OPENWRITE_ERROR, (char*)file_out_name_char, FName, TRUE);
-
-		if (laserRegioniConfig.paletteFileName != NULL)
-		{
-			std::string file_palette_name = makeExtension(laserRegioniConfig.paletteFileName, DENSITAPNT_ACT);
-			file_palette_name_char = file_palette_name.c_str();
-		}
-		HeaderWrPalette(out_file, col, rows, (char*)file_palette_name_char);
-		InvertiRaw2Bmp(density, rows, col, 1078, out_file);
-		fclose(out_file);
-	}
-
-	delete density;
-	fclose(fd);
-	return;
+	std::cout << "fatto build matrice sparsa... Maximum density: " << max_density << std::endl;
 };
+
+/* Funzione per la ricerca del terreno. */
+void terrain_search(DataSet *data1, std::map<std::pair<int, int>, std::vector<real_>> &item_map, int rows, int col, int& max_density, unsigned char *density)
+{
+	long int empty_cells = 0, m;
+	for (int i = 0; i < rows; ++i)   //scorre le righe
+	{
+		m = i *col;
+		for (int j = 0; j < col; ++j)  //scorro le colonne	
+		{
+			/* Se non viene trovato alcun elemento nella cella della mappa allora la si setta nulla. */
+			if (item_map.count(std::make_pair(i, j)) < 1/*item_map.find(std::make_pair(i, j)) == item_map.end()*/)
+			{
+				empty_cells++;
+				data1->z[m + j] = QUOTA_BUCHI;
+			}
+			else
+			{
+				/* Altrimenti valuto immediatamente la lunghezza del vettore di indice (pair) ij */
+				int vec_size = item_map[std::make_pair(i, j)].size();
+				/* Se la dimensione del vettore è pari a 1 allora il valore
+				appena letto viene passato al vettore z. */
+				if (vec_size == 1)
+				{
+					data1->z[m + j] = item_map[std::make_pair(i, j)].front();
+				}
+				else
+				{
+					/* Altrimenti si valuta la differenza tra i due elementi con valore maggiore e valore minore. */
+					real_ delta = item_map[std::make_pair(i, j)].back() - item_map[std::make_pair(i, j)].front();
+					/* confronto il valore delta con il dislivello matrice sparsa settato con il file config*/
+					real_ dislivello = (real_)laserRegioniConfig.dislivelloMatriceSparsa;
+					/* Valuto il valore di delta rispetto al dislivello inserito nel file config. */
+					if (delta > dislivello)
+					{
+						/* Se il delta è maggiore del dislivello allora  prendo l'ultimo elemento del vettore. */
+						data1->z[m + j] = item_map[std::make_pair(i, j)].front();
+					}
+					else
+					{
+						if (vec_size % 2)
+						{
+							/* Altrimenti, se il vettore contiene un numero pari di elelenti, prendo l'elemento che si trova al centro.*/
+							data1->z[m + j] = item_map[std::make_pair(i, j)].at((vec_size - 1) / 2);
+						}
+						else
+						{
+							/* Se invece il numero di elelemti è dispari, faccio la somma dell'elemento precedente a quello che si trova
+							a metà del vettore e dell'elemento che si trova proprio a metà del vettore diviso per due. */
+							data1->z[m + j] = (item_map[std::make_pair(i, j)].at((vec_size - 1) / 2) + item_map[std::make_pair(i, j)].at((vec_size - 1) / 2 + 1)) / 2;
+						}
+					}
+				}
+				/* Per adesso ho aggiunto questo pezzo ma devo chiedere alla professoressa. */
+				max_density = vec_size > max_density ? vec_size : max_density;
+				if (vec_size > 255) vec_size = 255;
+				*(density + m + j) = (unsigned char)vec_size;
+			}
+		}
+	}
+	std::cout << "fatto build matrice sparsa... Maximum density: " << max_density << std::endl;
+};
+
 
 /* Funzione per compiere il sort. Organizza la lista in base all'indice. In caso di stesso indice
 	l'ordina a valori crescenti di quota. */
@@ -277,9 +390,9 @@ bool compare_index_then_value(Item& first, Item& second)
 /* Funzione per l'immagazzinamento della lista all'interno di una mappa.
 	Tale mappa avrà come chiave il pair contenente gli indici di riga e colonna della futura matrice 
 	e come valore il vettore contenente tutti gli elementi copntraddistinti dallo stesso indice di riga e colonna.*/
-std::map<std::pair<int, int>, std::vector<float>> list2map(std::list<Item>&point_list)
+std::map<std::pair<int, int>, std::vector<real_>> list2map(std::list<Item>&point_list)
 {
-	std::map<std::pair<int, int>, std::vector<float>> map_points;
+	std::map<std::pair<int, int>, std::vector<real_>> map_points;
 	for (std::list<Item>::const_iterator iterator = point_list.begin(); iterator != point_list.end(); ++iterator)
 	{
 		map_points[iterator->coordinate].push_back(iterator->quota);
@@ -287,13 +400,13 @@ std::map<std::pair<int, int>, std::vector<float>> list2map(std::list<Item>&point
 	return map_points;
 };
 
-void write_map(std::map<std::pair<int, int>, std::vector<float>>&my_map, const char *filename)
+void write_map(std::map<std::pair<int, int>, std::vector<real_>>&my_map, const char *filename)
 {
 	FILE *fd = fopen(filename, "w");
 	// Can't open the file
 	if (!my_map.empty())
 	{
-		for (std::map<std::pair<int, int>, std::vector<float>>::const_iterator iterator = my_map.begin(); iterator != my_map.end(); ++iterator)
+		for (std::map<std::pair<int, int>, std::vector<real_>>::const_iterator iterator = my_map.begin(); iterator != my_map.end(); ++iterator)
 		{
 			/*std::pair<int, int> c = std::make_pair(iterator->first, iterator->second);
 			int	size = my_map[iterator->first].size();
@@ -308,15 +421,16 @@ void write_map(std::map<std::pair<int, int>, std::vector<float>>&my_map, const c
 	fclose(fd);
 };
 
-void fill_empty_cells(float *matrice_sparsa, int rows, int col)
+void fill_empty_cells(real_ *matrice_sparsa, int rows, int col)
 {
 	std::cout << "Costruzione della matrice completa" << std::endl;
 	int vec_size = 0;
-	float delta = 0.00;
+	real_ delta = 0.00;
 	//int rows = laserRegioniConfig.gridHeight;
 	//int col = laserRegioniConfig.gridWidth;
 
-	Eigen::MatrixXf temp(rows, col);
+	typedef Eigen:: Matrix <real_, Eigen::Dynamic, Eigen::Dynamic > MatrixXr;
+	MatrixXr temp(rows, col);
 
 	for (int i = 0; i < rows*col; ++i)
 	{
@@ -329,7 +443,7 @@ void fill_empty_cells(float *matrice_sparsa, int rows, int col)
 		{
 			if (matrice_sparsa [i*col + j] == QUOTA_BUCHI)
 			{
-				std::vector <float> neighbors;
+				std::vector <real_> neighbors;
 				for (int k = -1; k <= 1; ++k)
 				{
 					for (int l = -1; l <= 1; ++l)
@@ -354,7 +468,7 @@ void fill_empty_cells(float *matrice_sparsa, int rows, int col)
 					delta = neighbors.end() - neighbors.begin();
 					/* Dato che il programma non legge un float in ingresso lo scrivo nel file config * 100,
 					quindi sotto lo divido per 100 e lo casto. */
-					float dislivello = (float)(laserRegioniConfig.dislivelloMatriceSparsa) / 100;
+					real_ dislivello = (real_)(laserRegioniConfig.dislivelloMatriceSparsa) / 100;
 					if (delta < dislivello)
 					{
 						/*if (vec_size % 2)   matrice_sparsa[i* col + j ] = neighbors[vec_size/2.0];

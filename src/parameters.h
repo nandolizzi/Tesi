@@ -87,8 +87,9 @@ typedef struct Configurator
     float       soglia_industriale;          //define per la classificazione
     float       limite_punti;          //define per la classificazione
 	char		paletteFileName[MAX_STR_LEN];	//Nome file palette (opzionale)
-	int			dislivelloMatriceSparsa;	//Valore di soglia di dislivello per la costruzione 
+	float		dislivelloMatriceSparsa;	//Valore di soglia di dislivello per la costruzione 
 											//della matrice sparsa
+	float		altezzaDaTerreno;				// Altezza rispetto a quanto identificato come terreno
 	int			isInputDataRAW;
 	int			showAdditionalInfos;		//Per visualizzare informazioni supplementari sulla lettura dei dati
 	float		loLeftX;				//coordinata X del pto in basso a sinistra della finestra da elaborare
@@ -159,6 +160,7 @@ int validatePercentualeFalde(const void * value, int paramState);
 int validateSogliaLIMITE_PUNTI(const void * value, int paramState);
 int validatePaletteFile(const void * value, int paramState);
 int validateDislivelloMatriceSparsa(const void * value, int paramState);
+int validateAltezzaDaTerreno(const void* value, int paramState);
 int validateLoLeftX(const void * value, int paramState);
 int validateLoLeftY(const void * value, int paramState);
 int validateGridWidth(const void * value, int paramState);

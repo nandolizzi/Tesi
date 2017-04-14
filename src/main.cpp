@@ -67,8 +67,8 @@ int main(int argc, char const *argv[])
 	// Variabili utilizzate per il calcolo del gradiente.
 	//Immagine degli orientamenti dei gradienti.
 	unsigned char *pCnt = new unsigned char[prova->widthGrid*prova->heightGrid];
-	float *pGraR = new float[prova->widthGrid*prova->heightGrid];
-	float *pGraC = new float[prova->widthGrid*prova->heightGrid];
+	real_ *pGraR = new real_[prova->widthGrid*prova->heightGrid];
+	real_ *pGraC = new real_[prova->widthGrid*prova->heightGrid];
 	SegmentaInFalde(prova, &pCnt, &pGraR, &pGraC);
 	//pPLoc = MappaPianiLocali(&Data, ppCompleteMatrix);
 

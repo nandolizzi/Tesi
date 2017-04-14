@@ -9,15 +9,15 @@ std::string makeExtension(const char *filename, const char *newExtension)
 	//std::string output_name("..\\Outputs\\");
 	std::string name(filename);
 	std::string extension(newExtension);
+	//std::cout << "name: " << name << "; nuova estenzione: " << extension << std::endl;
 	size_t pos = name.std::string::rfind('.');
 	
 	/*Nel caso particolare del file palette non vi è un'estensione, per cui si aggiunge
 		comunque la nuova estensione. */
-	if ((name != "palette" || name != "Palette"))
+	if ((name == "palette" || name == "Palette"))
 	{
-		std::string project_name = name.std::string::substr(0, pos);
-		std::string output_name = project_name;
-		output_name += extension;
+		std::string output_name = name + extension;
+		//std::cout << "Sto nella parte di routine riservata a palette! Nome rimpiazzato: " << output_name << std::endl;
 		return output_name;
 	}
 	/* Se non è stato inserito nessun '.' vuol dire che il file che si è cercato di caricare non possedeva estensione alcuna.*/
@@ -32,8 +32,7 @@ std::string makeExtension(const char *filename, const char *newExtension)
 		std::string project_name = name.std::string::substr(0, pos);
 		std::string output_name = project_name;
 		output_name += extension;
-		std::cout << "Nome rimpiazzato: " << output_name << std::endl;
-		//delete project_name_char;
+		//std::cout << "Nome rimpiazzato: " << output_name << std::endl;
 		return output_name;
 	}
 };
@@ -257,7 +256,7 @@ void export(DataSet *data1)
 	//char *nomeFileOut = NULL;
 	std::string file_out_name;
 	int nopunti, k, col, rows;
-	float x, y;
+	real_ x, y;
 	errno_t err;
 
 	//JOHN_COOR
@@ -281,7 +280,7 @@ void export(DataSet *data1)
 
 			x = data1->LoLeftX + j*data1->pelsX;
 			/* Versione originale è pelsY ma nella mia uso solo una variabile.
-				Anche in quella originale, in realtà, venivano assegnati con gli stessi valori. */
+				Anche in quella originale, in real_tà, venivano assegnati con gli stessi valori. */
 			y = (data1->LoLeftY + data1->heightGrid* data1->pelsX) - i*data1->pelsX;
 			k = i* col + j;
 			if (data1-> z[k] != QUOTA_BUCHI)

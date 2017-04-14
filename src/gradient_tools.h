@@ -17,25 +17,25 @@ struct PLine{
 	//0 default - non elaborata
 	//1 se associata ad una linea di cartografia
 	//2 se non associata
-	float E[5], N[5];   //in posizione 0 il baricentro 1 e 2 i 2 estremi 
+	real_ E[5], N[5];   //in posizione 0 il baricentro 1 e 2 i 2 estremi 
 	//oppure fino a 5 punti se una curva
-	float Teta;    //orientamento
+	real_ Teta;    //orientamento
 	//se DXF arctan degli estremi
 	//se img da Burns o da Mediana
-	float length;
-	float sigma0;
+	real_ length;
+	real_ sigma0;
 	int Punti;
 	int semeR, semeC;
-	float a, b, c;   //parametri della linea
+	real_ a, b, c;   //parametri della linea
 	//	 struct nodo *relazioni; //$ 204//$ puntatore alla lista dei dati lungo il bordo
 };
 
-void build_kernel(float *Hr, float *Hc, int dim);
-bool kernelf(float *Z, float *kern, float *filter_something, float dvd, int Width, int Height, int Lx, int Ly);
-int Gradiente(float *grx, float *gry, unsigned char *gra, int width, int height, float passo, float LoLeftX, float LoLeftY);
-int build_partitions(float *a, float *b);
+void build_kernel(real_ *Hr, real_ *Hc, int dim);
+bool kernelf(real_ *Z, real_ *kern, real_ *filter_something, real_ dvd, int Width, int Height, int Lx, int Ly);
+int Gradiente(real_ *grx, real_ *gry, unsigned char *gra, int width, int height, real_ passo, real_ LoLeftX, real_ LoLeftY);
+int build_partitions(real_ *a, real_ *b);
 
-bool Teta(float *grx, float *gry, unsigned char *map1, float *a, float sogliaGradiente, int Lx, int Ly, int width, int height, int partizioni, int MaxCol);
-unsigned char Analisi_teta(double teta, float *a, int partizione, int MaxCol);
-int conta(unsigned char *map1, int * cnt, int larg, int alt, int MaxCol);
-int Fusione(int *cnt1, int *cnt2, unsigned char *map1, unsigned char *map2, unsigned char *map, int larg, int alt);
+bool Teta(real_ *grx, real_ *gry, unsigned char *map1, real_ *a, real_ sogliaGradiente, int Lx, int Ly, int width, int height, int partizioni, int MaxCol);
+unsigned char Analisi_teta(double teta, real_ *a, int partizione, int MaxCol);
+int conta(unsigned char *map1, long int * cnt, int larg, int alt, int MaxCol, int caso);
+int Fusione(long int *cnt1, long int *cnt2, unsigned char *map1, unsigned char *map2, unsigned char *map, int larg, int alt);

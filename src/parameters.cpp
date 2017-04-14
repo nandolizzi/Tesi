@@ -191,7 +191,7 @@ int validateTipoRicerca(const void * value, int paramState)
 {
 	int intVal = *(int *)value;
 
-	if ((intVal != 0) && (intVal != 1) && (intVal != 2))
+	if ((intVal != 0) && (intVal != 1) && (intVal != 2) && (intVal != 3))
 	{
 		printf("Tipo di ricerca '%d' non riconosciuto.\nImpostato 1 (DTM)\n", intVal);
 	    *(int *)value = 1;
@@ -462,17 +462,29 @@ int validatePaletteFile(const void * value, int paramState)
 
 int validateDislivelloMatriceSparsa(const void * value, int paramState)
 {
-	int intVal = *(int *)value;
+	float fVal = *(float *)value;
 
 	if (paramState == PARAM_ASSENTE)
 	{
-		*(int *) value = DISLIVELLO_MAT_SPARSA;
+		*(float *) value = DISLIVELLO_MAT_SPARSA;
 		return SUCCESS;
 	}
 
 	return SUCCESS;
 }
 
+int validateAltezzaDaTerreno(const void* value, int paramState)
+{
+	float fVal = *(float *)value;
+
+	if (paramState == PARAM_ASSENTE)
+	{
+		*(float *)value = ALT_DA_TERRENO;
+		return SUCCESS;
+	}
+
+	return SUCCESS;
+}
 int validateLoLeftX(const void * value, int paramState)
 {
 	long intVal = *(long *) value;
