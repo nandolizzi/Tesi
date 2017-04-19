@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
 	cout << "The three file you passed were all correct" << endl;
 	
 	/* Inizializzo la variabile che conterrà la lista. */
-	std::list<Item> raw_points;
+	std::list<Item> raw_points, filtered_points;
 	/* Inizializzo una variabile DataSet. */
 	DataSet *prova= new DataSet;
 	//printData(prova);
@@ -61,7 +61,7 @@ int main(int argc, char const *argv[])
 	Config2Data(prova);
 	//printData(prova);
 	
-	leggiDatiInput(new_argv_1, prova, raw_points);
+	leggiDatiInput(new_argv_1, prova, raw_points, filtered_points);
 	writeBpw(laserRegioniConfig.projectName, prova);
 	/*Devo capire bene come passare sta roba (se per riferimento o meno). */
 	// Variabili utilizzate per il calcolo del gradiente.

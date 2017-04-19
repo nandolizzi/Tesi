@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 //#include <Core>
 #include <vector>
 
@@ -127,7 +128,7 @@ char * validateCFGDataRAW()
 	return NULL;
 }
 
-void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
+void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points, std::list<Item>& f_points)
 {
 	char nomeFileInput[255] = "\0";
 	const char * FName = "leggiDatiInput";
@@ -210,7 +211,7 @@ void  leggiDatiInput(const char *filename, DataSet *data1, list<Item>&points)
 	}
 
 	/* Costruisco la matrice sparsa... Per ora faccio solo la ricerca dei punti alti. */
-	buildMatriceSparsa(data1, points, data1->heightGrid, data1->widthGrid);
+	buildMatriceSparsa(data1, points, f_points, data1->heightGrid, data1->widthGrid);
 
 	//riempie matrice sparsa... Non so se effettivamente mi serve, per ora l'ho riscritta.
 	fill_empty_cells(data1->z, data1->heightGrid, data1->widthGrid);

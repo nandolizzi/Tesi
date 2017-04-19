@@ -136,6 +136,24 @@ void writeList(std::list<Item>&points, const char *filename)
 	//return true;
 }
 
+void write_list_cloud(std::list<Item>&points, const char *filename)
+{
+	FILE *fd = fopen(filename, "w");
+	// Can't open the file
+
+	if (!points.empty())
+	{
+		for (std::list<Item>::const_iterator iter = points.begin(); iter != points.end(); iter++)
+		{
+			fprintf(fd, "%lf %lf %lf\n", iter->nord, iter->est, iter->quota);
+		}
+	}
+	else
+		std::cout << "The List is empty" << std::endl;
+	fclose(fd);
+	//return true;
+};
+
 void setItem(Item &n_it, real_ n, real_ e, real_ q, int identity, const std::pair<int, int>& c)
 {
 	n_it.nord = n;
@@ -145,7 +163,7 @@ void setItem(Item &n_it, real_ n, real_ e, real_ q, int identity, const std::pai
 	n_it.coordinate = c;
 };
 
-void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int col)
+void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, std::list<Item>& filt_points, int rows, int col)
 {
 	const char			*FName = "buildMatriceSparsa";
 	long int emptyCells = 0, m;
@@ -174,20 +192,6 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 	//FILE *fd = fopen("prova_output.txt", "w");
 	int tot_celle = rows*col;
 
-	/*for (int i = 0; i < 5; ++i)   //scorre le righe
-	{
-	m = i *rows;
-	for (int j = 0; j < 10; ++j)  //scorro le colonne
-	{
-	{
-	for (int k = 0; k< item_map[std::make_pair(i, j)].size(); ++k)
-	{
-	std::pair<int, int> b = std::make_pair(i, j);
-	std::cout << "mymap[" << i << "," << j << "](" << k << "): " << item_map[b].at(k) << std::endl;
-	}
-	}
-	}
-	}*/
 	std::cout << "\ndislivelloMatriceSparsa: " << laserRegioniConfig.dislivelloMatriceSparsa << std::endl;
 	std::cout << "altezza da terreno: " << laserRegioniConfig.altezzaDaTerreno << std::endl;
 	if (laserRegioniConfig.tipoRicerca == TIPORICERCA_EDIFICI)
@@ -199,13 +203,8 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 		terrain_search(data1, item_map, rows, col, MaxD, density);
 	}
 	else if (laserRegioniConfig.tipoRicerca == TIPORICERCA_ALT_TERRENO)
-	{
-		/*unsigned char *density_temp = new unsigned char[data1->widthGrid*data1->heightGrid];
-		for (size_t i = 0; i < (data1->widthGrid*data1->heightGrid); i++)
-		{
-			density_temp[i]= 0;
-		}*/
-		
+	{	
+		//int pippo = 0;
 		real_ *z_temp = new real_[tot_celle];
 
 		terrain_search(data1, item_map, rows, col, MaxD, density);
@@ -223,9 +222,12 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 			{
 				data1->z[i] = 0;
 			}
+			/*else
+				pippo++;*/
 		}
 		
-		std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << std::endl;
+		std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << " tot celle diverse da zero: " /*<< pippo*/ << std::endl;
+
 		delete z_temp;
 	}
 	std::cout << "fatto build matrice sparsa... Maximum density: " << MaxD << std::endl;
@@ -250,8 +252,11 @@ void buildMatriceSparsa(DataSet *data1, std::list<Item>& points, int rows, int c
 		fclose(out_file);
 	}
 
+	write_elaborated_points(points, filt_points, data1, rows, col);
+
 	delete density;
 	//fclose(fd);
+	
 	return;
 };
 
@@ -327,7 +332,7 @@ void terrain_search(DataSet *data1, std::map<std::pair<int, int>, std::vector<re
 		for (int j = 0; j < col; ++j)  //scorro le colonne	
 		{
 			/* Se non viene trovato alcun elemento nella cella della mappa allora la si setta nulla. */
-			if (item_map.count(std::make_pair(i, j)) < 1/*item_map.find(std::make_pair(i, j)) == item_map.end()*/)
+			if (item_map.count(std::make_pair(i, j)) < 1)
 			{
 				empty_cells++;
 				data1->z[m + j] = QUOTA_BUCHI;
@@ -386,6 +391,50 @@ bool compare_index_then_value(Item& first, Item& second)
 {
 	return ((first.coordinate.first < second.coordinate.first) || (first.coordinate.first == second.coordinate.first && first.coordinate.second < second.coordinate.second) || (first.coordinate.first == second.coordinate.first && first.coordinate.second == second.coordinate.second && first.quota < second.quota));
 };
+
+/* Funzione per il find in base agli indici di riga e di colonna.
+
+	Copio i valori di quota e coordinate dell'eventuale elemento trovato e lo cancello dalla lista.
+	In uscita restituirò l'elemento copia nel caso in cui lo si è trovato, altrimenti l'elemento con il valore di quota
+	fissato a -1. */
+Item Find(std::pair<int, int> coord, std::list <Item>& my_list)
+{
+	Item point;
+	//point.quota = NOT_FOUND;
+
+	if (!my_list.empty())
+	{
+		//std::cout << "la lista temp non risulta vuota" << std::endl;
+		for (std::list<Item>::const_iterator iter = my_list.begin(); iter != my_list.end(); ++iter)
+		{
+			if (coord.first == iter->coordinate.first && coord.second == iter->coordinate.second /*&& iter->quota != NOT_FOUND*/)
+			{
+				//std::cout << "trovo l'elemento: "<< iter->coordinate.first << " " << iter->coordinate.second <<" id: "<< iter->id << std::endl;
+				point.coordinate = iter->coordinate;
+				point.est = iter->est;
+				point.nord = iter->nord;
+				point.quota = iter->quota;
+				point.id = iter->id;
+
+				my_list.erase(iter);
+				//for (std::list<Item>::const_iterator it = my_list.begin(); it < fine; ++ it)
+				//{
+				//	my_list.erase(it);
+				//}
+
+				return point;
+			}
+		}
+		point.quota = NOT_FOUND;
+		return point;
+	}
+	else
+	{
+		std::cout << "la lista temp è vuota" << std::endl;
+	}
+	
+};
+
 
 /* Funzione per l'immagazzinamento della lista all'interno di una mappa.
 	Tale mappa avrà come chiave il pair contenente gli indici di riga e colonna della futura matrice 
@@ -498,3 +547,37 @@ void fill_empty_cells(real_ *matrice_sparsa, int rows, int col)
 	return;
 }
 
+void write_elaborated_points(std::list <Item> starting_point, std::list<Item> new_list, DataSet *data1, int rows, int col)
+{
+	Item point;
+	setItem(point,0 , 0 , 0 , 0, std::make_pair(0, 0));
+	
+	std::list<Item> temp;
+	temp = starting_point;
+	std::list<Item>::const_iterator iter = temp.begin();
+
+	for (size_t i = 0; i < rows; ++i)
+	{
+		for (size_t j = 0; j < col; ++j)
+		{
+			//std::cout << "no problema!" << std::endl;
+			if (data1->z[i*col + j] != 0)
+			{
+				//std::cout << "i: " << i << " j: " << j << std::endl;
+				while (point.quota != NOT_FOUND)
+				{
+					point = Find(std::make_pair(i, j), temp);
+					if (point.quota != NOT_FOUND)
+						new_list.push_back(point);
+				}
+				//std::cout << "PROBLEMA_ANCORA_MAGGIORE: "<< i << " " << j << std::endl;
+				point.quota = 0;
+				//std::cout << "PROBLEMA_MAGGIORE: "<< i << " " << j  << std::endl;
+				//continue;
+				//std::cout << "PROBLEMA" << std::endl;
+			}
+		}
+	}
+	write_list_cloud(new_list, "prova_nuvola_punti_1.txt");
+	return;
+};

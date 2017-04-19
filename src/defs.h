@@ -57,6 +57,6 @@ void printData(DataSet *data1);
 long int fileRows(FILE *inputFile);
 int selezionaCaso(FILE *InFile);
 char * validateCFGDataRAW();
-void leggiDatiInput(const char *filename, DataSet *data1, std::list<Item>&points);
+void leggiDatiInput(const char *filename, DataSet *data1, std::list<Item>&points, std::list<Item>&f_points);
 int VerificaPunto(char *str,FILE *InFile);
 void  SegmentaInFalde(DataSet *data1, unsigned char **cnt, real_ **graR, real_ **graC);

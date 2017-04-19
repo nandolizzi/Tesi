@@ -1,21 +1,34 @@
-﻿Compilazione avviata 14/04/2017 20:08:25.
+﻿Compilazione avviata 19/04/2017 16:10:16.
      1>Progetto "C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Tesi.vcxproj" sul nodo 2 (destinazioni: Build).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\Nando\Documents\Eigen_Lib_SRCS\Eigen /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\tools.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\Users\Nando\Documents\Eigen_Lib_SRCS\Eigen /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt src\defs.cpp src\tools.cpp
+         defs.cpp
+     1>c:\users\nando\documents\visual studio 2013\projects\progetto_new\src\output_tools.h(33): warning C4237: parola chiave 'export' non ancora supportata, riservata per un utilizzo futuro
+     1>src\defs.cpp(184): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     1>src\defs.cpp(223): warning C4237: parola chiave 'export' non ancora supportata, riservata per un utilizzo futuro
+     1>src\defs.cpp(223): warning C4390: ';': trovata istruzione controllata vuota. È ciò che si desidera?
+     1>src\defs.cpp(309): warning C4101: 'lineeIMG': variabile locale senza riferimenti
+     1>src\defs.cpp(295): warning C4101: 'i': variabile locale senza riferimenti
+     1>src\defs.cpp(310): warning C4101: 'cls': variabile locale senza riferimenti
+     1>src\defs.cpp(294): warning C4101: 'shift': variabile locale senza riferimenti
          tools.cpp
      1>c:\users\nando\documents\visual studio 2013\projects\progetto_new\src\output_tools.h(33): warning C4237: parola chiave 'export' non ancora supportata, riservata per un utilizzo futuro
      1>src\tools.cpp(58): warning C4244: '=': conversione da 'real_' a 'int'. Possibile perdita di dati.
      1>src\tools.cpp(59): warning C4244: '=': conversione da 'real_' a 'int'. Possibile perdita di dati.
      1>src\tools.cpp(114): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211): vedere la dichiarazione di 'fopen'
-     1>src\tools.cpp(153): warning C4018: '<': errata corrispondenza tra signed e unsigned
-     1>src\tools.cpp(212): warning C4018: '<': errata corrispondenza tra signed e unsigned
-     1>src\tools.cpp(219): warning C4018: '<': errata corrispondenza tra signed e unsigned
-     1>src\tools.cpp(157): warning C4101: 'delta': variabile locale senza riferimenti
-     1>src\tools.cpp(151): warning C4101: 'm': variabile locale senza riferimenti
-     1>src\tools.cpp(405): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>src\tools.cpp(141): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211): vedere la dichiarazione di 'fopen'
-     1>src\tools.cpp(476): warning C4244: 'argomento': conversione da 'double' a 'unsigned int'. Possibile perdita di dati.
+     1>src\tools.cpp(171): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     1>src\tools.cpp(211): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     1>src\tools.cpp(218): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     1>src\tools.cpp(175): warning C4101: 'delta': variabile locale senza riferimenti
+     1>src\tools.cpp(169): warning C4101: 'm': variabile locale senza riferimenti
+     1>src\tools.cpp(454): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h(211): vedere la dichiarazione di 'fopen'
+     1>src\tools.cpp(525): warning C4244: 'argomento': conversione da 'double' a 'unsigned int'. Possibile perdita di dati.
+     1>src\tools.cpp(559): warning C4018: '<': errata corrispondenza tra signed e unsigned
+     1>src\tools.cpp(561): warning C4018: '<': errata corrispondenza tra signed e unsigned
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Release\Tesi.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Release\Tesi.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Release\Tesi.lib" /MACHINE:X86 /SAFESEH Release\config_file.obj
          Release\error.obj
@@ -28,10 +41,11 @@
          Release\defs.obj
          Release\tools.obj
          Generazione codice in corso...
+     1>c:\users\nando\documents\visual studio 2013\projects\progetto_new\src\tools.cpp(436): warning C4715: 'Find': non tutti i percorsi di controllo restituiscono un valore
          Generazione codice terminata
          Tesi.vcxproj -> C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Release\Tesi.exe
      1>Compilazione progetto "C:\Users\Nando\Documents\Visual Studio 2013\Projects\Progetto_new\Tesi.vcxproj" (destinazioni: Build) completata.
 
 Compilazione completata.
 
-Tempo trascorso 00:00:03.27
+Tempo trascorso 00:00:04.40
